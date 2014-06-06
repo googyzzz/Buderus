@@ -16,5 +16,14 @@ struct temperature_fine{
 };
 
 
+// Fehler Speichervariable
+struct {
+	unsigned diesel_t_error:		1;
+	unsigned wwasser_t_error:		1;
+	unsigned FM241_error:			1;
+	unsigned hk2_t_error:			1;
+} errors;
+
+
 
 #endif /* TYPES_H_ */

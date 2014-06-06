@@ -20,6 +20,8 @@
 #include "ww_state_machine.h"
 #include "uart.h"
 #include "types.h"
+#include "vars.h"
+#include "defines.h"
 
 void initialize() {
 	// init Watchdog
