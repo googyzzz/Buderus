@@ -7,6 +7,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "timer0.h"
+#include "vars.h"
 
 
 // Timer 0 init (freq = 1 kHz @ CLK = 16 MHz)

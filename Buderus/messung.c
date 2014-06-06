@@ -3,6 +3,7 @@
 #include "messung.h"
 #include "shiftregister.h"
 #include <stdlib.h>
+#include "vars.h"
 
 void messung_init() {
 	// ADC als eingang

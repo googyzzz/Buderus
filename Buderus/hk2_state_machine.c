@@ -7,6 +7,7 @@
 #include <avr/io.h>
 #include "shiftregister.h"
 #include "hk2_state_machine.h"
+#include "vars.h"
 
 void hk2_state_machine() {
 	switch (HK2_state) {

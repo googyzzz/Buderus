@@ -10,9 +10,6 @@
 
 uint16_t cycles;
 
-extern volatile uint8_t minuten;
-extern volatile uint16_t timer;
-
 void timer2_init();
 
 #endif /* TIMER2_H_ */

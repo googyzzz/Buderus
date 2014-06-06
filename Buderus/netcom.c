@@ -11,6 +11,8 @@
 #include "netcom.h"
 #include "shiftregister.h"
 #include "types.h"
+#include "vars.h"
+#include "defines.h"
 
 void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 {

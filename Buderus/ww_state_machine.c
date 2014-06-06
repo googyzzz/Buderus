@@ -7,6 +7,7 @@
 #include <avr/io.h>
 #include "ww_state_machine.h"
 #include "shiftregister.h"
+#include "vars.h"
 
 void ww_state_machine() {
 	//-----------------state machine Warmwasser------------------------------
@@ -25,6 +26,11 @@ void ww_state_machine() {
 			shift_set(shift);
 			break;
 		}
+
+		if (source_ist == UNBEKANNT) {
+
+		}
+		//source_turn
 
 		// Warmwasser warm genug, gehe in den Wartezustand
 		if (WW_ist >= WW_soll) {

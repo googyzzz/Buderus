@@ -15,7 +15,6 @@
 #define OK		0xFF
 #define ERROR	0x0F
 
-extern volatile uint16_t timer;
 uint8_t state;
 // Messergebnis ADC
 volatile uint16_t mval;

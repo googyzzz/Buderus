@@ -5,7 +5,6 @@
 #include <avr/wdt.h>		// Watchdog
 #include <avr/pgmspace.h>	// PROGMEM
 #include <avr/eeprom.h>		// EEPROM
-#include "main.h"
 #include "lan.h"
 #include "ntp.h"
 //#include "hd44780.h"
@@ -16,10 +15,12 @@
 #include "timer0.h"
 #include "timer2.h"
 #include "netcom.h"
-#include "hk2_state_machine.h"
-#include "ww_state_machine.h"
+//#include "hk2_state_machine.h"
+//#include "ww_state_machine.h"
 #include "uart.h"
+#include "defines.h"
 #include "types.h"
+#include "vars.h"
 
 void initialize() {
 	// init Watchdog
@@ -351,28 +352,26 @@ void prog(){
 		 default: HK1_state = 0;
 		 }
 		 */
-		ww_state_machine();
-		hk2_state_machine();
+//		ww_state_machine();
+//		hk2_state_machine();
 
 		// Energiequelle
-		// source_turn hat 3 Zustände
-		// zu Holz drehen, zu Diesel drehen, aus
-		if ((source_ist != source_soll) || (source_turn != OFF)) {	// Quelle hat sich geändert oder Mischer in Bewegung
-			if (source_turn != source_soll) {
-				source_turn = OFF;
+		if ((source_ist != source_soll) || (source_turn != OFF)) {	// Quelle hat sich geändert oder Mischer in Bewegung, es ist was zu tun
+			if (source_turn != source_soll) {	// Drehung in die falsche Richtung
+				source_turn = OFF;	// Drehung stoppen
 			}
-			if (source_turn == OFF) {
-				source_turn = source_soll;
-				source_timer = 0;
-				PORTA &= ~((1 << PA3) | (1 << PA2));
-				if (source_turn == HOLZ) {
+			if (source_turn == OFF) {	// ändere Drehrichtung nur wenn Mischer angehalten
+				source_turn = source_soll;	// stelle Drehrichtung ein
+				source_timer = 0;	// resette Timer
+				PORTA &= ~((1 << PA3) | (1 << PA2));	// schalte Relais ab
+				if (source_turn == HOLZ) {	// starte Mischer
 					PORTA |= (1 << PA3);
 				} else if (source_turn == HEIZOEL) {
 					PORTA |= (1 << PA2);
 				}
 			}
 			// Motor dreht, warte
-			if (source_timer >= 130) {
+			if (source_timer >= 130) {	// Drehung abgeschlossen
 				PORTA &= ~((1 << PA3) | (1 << PA2));
 				source_ist = source_turn;
 				source_turn = OFF;
