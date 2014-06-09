@@ -12,13 +12,6 @@
 
 uint8_t energy_source = 0;
 
-//OneWire Sensoren Wertvariable
-uint8_t Holzkessel = 0;
-uint8_t Speicher0 = 0;
-uint8_t Speicher1 = 0;
-uint8_t Speicher2 = 0;
-uint8_t Speicher3 = 0;
-uint8_t Speicher4 = 0;
 struct temperature_fine arbeitsZimmer;
 struct temperature_fine schlafZimmer;
 
@@ -32,36 +25,6 @@ uint16_t brenner_status = 0;
 // Brenner arbeitsvariablen
 uint8_t Kessel_ist = 0;
 uint8_t Brenner_status = 0;
-
-
-// Heizkreis 1 Arbeitsvariablen
-uint8_t HK1_soll = 0;		// read/write
-uint8_t HK1_ist = 0;		// read
-uint8_t HK1_active = 0x00;	// read/write
-uint8_t HK1_diff = 0;		// read:write
-uint8_t HK1_wait = 0;		// read/write
-uint8_t HK1_state = 0;		// read
-
-// Brauchwasser Arbeitsvariablen
-uint8_t WW_soll = 0;		// read/write, Solltemperatur
-uint8_t WW_ist = 0;			// read only, aktuelle Temperatur (nur bei aktiviertem Warmwasser auslesen ansonsten besser gesondert)
-uint8_t WW_state = 0;		// read only, aktueller Zustand
-uint8_t WW_active = 0x00;	// read/write, Aktivierungsflag
-uint8_t WW_diff = 0;		// read/write, offset für erneute Aufwärmung
-uint8_t WW_wait = 0;		// read/write
-
-// Bodenheizung Arbeitsvariablen
-uint8_t HK2_state = 0;		// read only, aktueller Zustand
-uint8_t HK2_soll = 0;		// read/write, Solltemperatur
-uint8_t HK2_ist = 0;		// read only, aktuelle Temperatur (nur der letzte gemessene Wert, nur bei aktivem Heizkreis verwenden. [state 1, 2 oder 3])
-uint8_t HK2_diff = 0;		// read/write, Regelgenauigkeit in Grad
-uint8_t HK2_rotate = 0;
-uint8_t ROTATION_TIME = 0;
-uint8_t HK2_direction = 0;
-uint8_t HK2_active = 0x00;	// read/write, Aktivierungsflag
-uint8_t HK2_wait = 0;		// read/write, Wartezeit zwischen den Messungen
-uint8_t HK2_present = 0;	// read only
-
 
 volatile uint8_t temperatur;
 volatile uint8_t messtate = 0;

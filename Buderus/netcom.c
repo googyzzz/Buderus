@@ -11,6 +11,8 @@
 #include "netcom.h"
 #include "shiftregister.h"
 #include "types.h"
+#include "vars2.h"
+#include "defines.h"
 
 void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 {
@@ -33,34 +35,34 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 		// steuerkomando (bulk read)
 		if (data[0] == 0x55) {
 			// Heizkreis 1
-			data[1] = HK1_active;
-			data[2] = HK1_ist;
-			data[3] = HK1_soll;
-			data[4] = HK1_diff;
-			data[5] = HK1_wait;
-			data[6] = HK1_state;
+			data[1] = opz.hk1_opt.active;
+			data[2] = opz.hk1_opt.ist;
+			data[3] = opz.hk1_opt.soll;
+			data[4] = opz.hk1_opt.diff;
+			data[5] = opz.hk1_opt.wait;
+			data[6] = opz.hk1_opt.state;
 			// Heizkreis 2
-			data[7] = HK2_active;
-			data[8] = HK2_ist;
-			data[9] = HK2_soll;
-			data[10] = HK2_diff;
-			data[11] = HK2_wait;
-			data[12] = HK2_state;
-			data[13] = HK2_present;
+			data[7] = opz.hk2_opt.active;
+			data[8] = opz.hk2_opt.ist;
+			data[9] = opz.hk2_opt.soll;
+			data[10] = opz.hk2_opt.diff;
+			data[11] = opz.hk2_opt.wait;
+			data[12] = opz.hk2_opt.state;
+			data[13] = opz.hk2_opt.present;
 			// Warmwasser
-			data[14] = WW_active;
-			data[15] = WW_ist;
-			data[16] = WW_soll;
-			data[17] = WW_diff;
-			data[18] = WW_wait;
-			data[19] = WW_state;
+			data[14] = opz.ww_opt.active;
+			data[15] = opz.ww_opt.ist;
+			data[16] = opz.ww_opt.soll;
+			data[17] = opz.ww_opt.diff;
+			data[18] = opz.ww_opt.wait;
+			data[19] = opz.ww_opt.state;
 			// OneWire Sensoren
-			data[20] = Holzkessel;
-			data[21] = Speicher0;
-			data[22] = Speicher1;
-			data[23] = Speicher2;
-			data[24] = Speicher3;
-			data[25] = Speicher4;
+			data[20] = temps.atmos;
+			data[21] = temps.sp0;
+			data[22] = temps.sp1;
+			data[23] = temps.sp2;
+			data[24] = temps.sp3;
+			data[25] = temps.sp4;
 			data[26] = arbeitsZimmer.degree;
 			data[27] = arbeitsZimmer.millis >> 8;
 			data[28] = arbeitsZimmer.millis & 0xFF;
@@ -84,74 +86,74 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 				//Heizkreis 1
 				//default EEPROM
 				case 0x10:
-					HK1_active = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK1_ACTIVE, HK1_active);
+					opz.hk1_opt.active = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK1_ACTIVE, opz.hk1_opt.active);
 					break;
 				case 0x11:
-					HK1_soll = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK1_SOLL, HK1_soll);
+					opz.hk1_opt.soll = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK1_SOLL, opz.hk1_opt.soll);
 					break;
 				case 0x12:
-					HK1_diff = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK1_DIFF, HK1_diff);
+					opz.hk1_opt.diff = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK1_DIFF, opz.hk1_opt.diff);
 					break;
 				case 0x13:
-					HK1_wait = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK1_WAIT, HK1_wait);
+					opz.hk1_opt.wait = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK1_WAIT, opz.hk1_opt.wait);
 					break;
 				//temporär RAM
-				case 0x15:	HK1_active = data[3];	break;
-				case 0x16:	HK1_soll = data[3];		break;
-				case 0x17:	HK1_diff = data[3];		break;
-				case 0x18:	HK1_wait = data[3];		break;
+				case 0x15:	opz.hk1_opt.active = data[3];	break;
+				case 0x16:	opz.hk1_opt.soll = data[3];		break;
+				case 0x17:	opz.hk1_opt.diff = data[3];		break;
+				case 0x18:	opz.hk1_opt.wait = data[3];		break;
 
 				// Heizkreis 2
 				// EEPROM
-				case 0x20:HK2_active = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK2_ACTIVE, HK2_active);
+				case 0x20:opz.hk2_opt.active = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK2_ACTIVE, opz.hk2_opt.active);
 					break;
 				case 0x21:
-					HK2_soll = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK2_SOLL, HK2_soll);
+					opz.hk2_opt.soll = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK2_SOLL, opz.hk2_opt.soll);
 					break;
 				case 0x22:
-					HK2_diff = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK2_DIFF, HK2_diff);
+					opz.hk2_opt.diff = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK2_DIFF, opz.hk2_opt.diff);
 					break;
 				case 0x23:
-					HK2_wait = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK2_WAIT, HK2_wait);
+					opz.hk2_opt.wait = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK2_WAIT, opz.hk2_opt.wait);
 					break;
 				// RAM
-				case 0x25:	HK2_active = data[3];	break;
-				case 0x26:	HK2_soll = data[3];		break;
-				case 0x27:	HK2_diff = data[3];		break;
-				case 0x28:	HK2_wait = data[3];		break;
+				case 0x25:	opz.hk2_opt.active = data[3];	break;
+				case 0x26:	opz.hk2_opt.soll = data[3];		break;
+				case 0x27:	opz.hk2_opt.diff = data[3];		break;
+				case 0x28:	opz.hk2_opt.wait = data[3];		break;
 
 
 				// Warmwasser
 				// EEPROM
 				case 0x30:
-					WW_active = data[3];
-					eeprom_write_byte((uint8_t *)EEP_WW_ACTIVE, WW_active);
+					opz.ww_opt.active = data[3];
+					eeprom_write_byte((uint8_t *)EEP_WW_ACTIVE, opz.ww_opt.active);
 					break;
 				case 0x31:
-					WW_soll = data[3];
-					eeprom_write_byte((uint8_t *)EEP_WW_SOLL, WW_soll);
+					opz.ww_opt.soll = data[3];
+					eeprom_write_byte((uint8_t *)EEP_WW_SOLL, opz.ww_opt.soll);
 					break;
 				case 0x32:
-					WW_diff = data[3];
-					eeprom_write_byte((uint8_t *)EEP_WW_DIFF, WW_diff);
+					opz.ww_opt.diff = data[3];
+					eeprom_write_byte((uint8_t *)EEP_WW_DIFF, opz.ww_opt.diff);
 					break;
 				case 0x33:
-					WW_wait = data[3];
-					eeprom_write_byte((uint8_t *)EEP_WW_WAIT, WW_wait);
+					opz.ww_opt.wait = data[3];
+					eeprom_write_byte((uint8_t *)EEP_WW_WAIT, opz.ww_opt.wait);
 					break;
 				// RAM
-				case 0x35:	WW_active = data[3];	break;
-				case 0x36:	WW_soll = data[3];		break;
-				case 0x37:	WW_diff = data[3];		break;
-				case 0x38:	WW_wait = data[3];		break;
+				case 0x35:	opz.ww_opt.active = data[3];	break;
+				case 0x36:	opz.ww_opt.soll = data[3];		break;
+				case 0x37:	opz.ww_opt.diff = data[3];		break;
+				case 0x38:	opz.ww_opt.wait = data[3];		break;
 
 				/////////////////// direktsteuerung
 				case 0x51:

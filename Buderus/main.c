@@ -16,12 +16,15 @@
 #include "timer0.h"
 #include "timer2.h"
 #include "netcom.h"
+#include "hk1_state_machine.h"
 #include "hk2_state_machine.h"
 #include "ww_state_machine.h"
 #include "uart.h"
 #include "types.h"
 #include "vars.h"
 #include "defines.h"
+
+#include "vars2.h"
 
 void initialize() {
 	// init Watchdog
@@ -42,25 +45,9 @@ void initialize() {
 	uart_init();
 	shift_init();
 
-	// init Parameter
-	HK1_soll = eeprom_read_byte((uint8_t *) EEP_HK1_SOLL);
-	HK1_active = eeprom_read_byte((uint8_t *) EEP_HK1_ACTIVE);
-	HK1_diff = eeprom_read_byte((uint8_t *) EEP_HK1_DIFF);
-	HK1_wait = eeprom_read_byte((uint8_t *) EEP_HK1_WAIT);
-
-	WW_soll = eeprom_read_byte((uint8_t *) EEP_WW_SOLL);
-	WW_active = eeprom_read_byte((uint8_t *) EEP_WW_ACTIVE);
-	WW_diff = eeprom_read_byte((uint8_t *) EEP_WW_DIFF);
-	WW_wait = eeprom_read_byte((uint8_t *) EEP_WW_WAIT);
-
-	HK2_soll = eeprom_read_byte((uint8_t *) EEP_HK2_SOLL);
-	HK2_diff = eeprom_read_byte((uint8_t *) EEP_HK2_DIFF);
-	ROTATION_TIME = eeprom_read_byte((uint8_t *) EEP_ROTATION_TIME);
-	HK2_active = eeprom_read_byte((uint8_t *) EEP_HK2_ACTIVE);
-	HK2_wait = eeprom_read_byte((uint8_t *) EEP_HK2_WAIT);
-
-	source_soll = eeprom_read_byte((uint8_t *) EEP_ENERGY_SOURCE);
-
+	init_hk1_eep();
+	init_ww_from_eep();
+	init_hk2_eep();
 
 	// Zähler für Uhr
 	timer = 0;
@@ -97,8 +84,10 @@ void prog(){
 	uint16_t erg;
 
 	while (1) {
-		//itoa(Holzkessel,buf,10);
-		//uart_puts(buf);
+		itoa(opz.ww_opt.soll,buf,10);
+		uart_puts(buf);
+		uart_putc(10);
+		uart_putc(13);
 
 		lan_poll();
 
@@ -188,11 +177,11 @@ void prog(){
 			erg = messung(2);
 			if (!(erg == 0xFFFF)) {
 				if (erg == 0xFFF0) {
-					WW_ist = 255;
+					opz.ww_opt.ist = 255;
 					errors.wwasser_t_error = TRUE;
 					messtate = 3;
 				} else {
-					WW_ist = convert_mt(erg);
+					opz.ww_opt.ist = convert_mt(erg);
 					errors.wwasser_t_error = FALSE;
 					messtate = 3;
 				}
@@ -204,15 +193,15 @@ void prog(){
 			erg = messung(3);
 			if (!(erg == 0xFFFF)) {
 				if (erg == 0xFFF0) {
-					HK2_present = FALSE;
+					opz.hk2_opt.present = FALSE;
 					errors.FM241_error = TRUE;
 					messtate = 5;
 				} else {
 					errors.FM241_error = FALSE;
 					if (erg < 400) {
-						HK2_present = TRUE;
+						opz.hk2_opt.present = TRUE;
 					} else {
-						HK2_present = FALSE;
+						opz.hk2_opt.present = FALSE;
 					}
 					messtate = 5;
 				}
@@ -238,12 +227,12 @@ void prog(){
 			erg = messung(6);
 			if (!(erg == 0xFFFF)) {// Messung abgeschlossen
 				if (erg == 0xFFF0) {// Messung fehlgeschlagen, Timmer overflow
-					HK2_ist = 0xFF;
+					opz.hk2_opt.ist = 0xFF;
 					errors.hk2_t_error = TRUE;
 					messtate = 0; // probiere nächsten Sensor
 				} else {// Messung erfolgreich
 					errors.hk2_t_error = FALSE;
-					HK2_ist = convert_mt(erg);
+					opz.hk2_opt.ist = convert_mt(erg);
 					messtate = 0;
 				}
 			}
@@ -266,27 +255,27 @@ void prog(){
 			}
 			break;
 		case 2: // lese Sensor aus
-			Holzkessel = (ow_temp_id(EEP_OW_HOLZ) >> 4);
+			temps.atmos = (ow_temp_id(EEP_OW_HOLZ) >> 4);
 			ow_state = 3;
 			break;
 		case 3:
-			Speicher0 = (ow_temp_id(EEP_OW_SPEICHER_0) >> 4);
+			temps.sp0 = (ow_temp_id(EEP_OW_SPEICHER_0) >> 4);
 			ow_state = 4;
 			break;
 		case 4:
-			Speicher1 = (ow_temp_id(EEP_OW_SPEICHER_1) >> 4);
+			temps.sp1 = (ow_temp_id(EEP_OW_SPEICHER_1) >> 4);
 			ow_state = 5;
 			break;
 		case 5:
-			Speicher2 = (ow_temp_id(EEP_OW_SPEICHER_2) >> 4);
+			temps.sp2 = (ow_temp_id(EEP_OW_SPEICHER_2) >> 4);
 			ow_state = 6;
 			break;
 		case 6:
-			Speicher3 = (ow_temp_id(EEP_OW_SPEICHER_3) >> 4);
+			temps.sp3 = (ow_temp_id(EEP_OW_SPEICHER_3) >> 4);
 			ow_state = 7;
 			break;
 		case 7:
-			Speicher4 = (ow_temp_id(EEP_OW_SPEICHER_4) >> 4);
+			temps.sp4 = (ow_temp_id(EEP_OW_SPEICHER_4) >> 4);
 			ow_state = 8;
 			break;
 		case 8:
@@ -304,55 +293,8 @@ void prog(){
 		default:
 			ow_state = 0;
 		}
-		//---------------------------------------------------------------------------------------------
-		//-----------------state machine Heizkreis 1-----------------------------
-		/*		switch (HK1_state) {
-		 case 0:
-		 if (HK1_active) {
-		 HK1_state = 1;
-		 break;
-		 }
-		 break;
 
-		 case 1:
-		 // Heizkreis 1 deaktiviert
-		 if (!HK1_active){
-		 HK1_state = 0;
-		 shift &= ~(1 << HK1);
-		 shift_set(shift);
-		 break;
-		 }
-
-		 if (HK1_ist > (HK1_soll + HK1_diff)) {
-		 shift &= ~(1 << HK1);	// zu warm, Pumpe aus
-		 shift_set(shift);
-		 }
-		 if (HK1_ist < (HK1_soll - HK1_diff)) {
-		 shift |= (1 << HK1);	// zu kalt, Pumpe an
-		 shift_set(shift);
-		 }
-		 HK1_timer = 0;
-		 HK1_state = 2;	// warten
-		 break;
-
-		 // Warten
-		 case 2:
-		 // Heizkreis 1 deaktiviert
-		 if (!HK1_active){
-		 HK1_state = 0;
-		 shift &= ~(1 << HK1);
-		 shift_set(shift);
-		 break;
-		 }
-		 // timeout
-		 if (HK1_timer > HK1_wait) {
-		 HK1_state = 1;
-		 break;
-		 }
-		 break;
-		 default: HK1_state = 0;
-		 }
-		 */
+		hk1_state_machine();
 		ww_state_machine();
 		hk2_state_machine();
 

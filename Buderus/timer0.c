@@ -7,6 +7,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "timer0.h"
+#include "vars2.h"
 
 
 // Timer 0 init (freq = 1 kHz @ CLK = 16 MHz)
@@ -24,7 +25,7 @@ ISR(TIMER0_COMP_vect) {
 		OW_timer++;
 		HK2_timer++;
 		HK1_timer++;
-		WW_timer++;
+		wwtimer++;
 		display_timer++;
 		refresh_timer++;
 		source_timer++;

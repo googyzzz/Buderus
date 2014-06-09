@@ -1,5 +1,4 @@
 #include "hd44780.h"
-#include "uart.h"
 
 #define high(p)		HD44780_PORT |= 1<<HD44780_##p
 #define low(p)		HD44780_PORT &= ~(1<<HD44780_##p)
@@ -32,7 +31,6 @@ uint8_t hd44780_nibble_read() {
 }
 
 uint8_t hd44780_busy_read() {
-	uart_putc(48);
 	uint8_t byte;
 
 	high(RW);
