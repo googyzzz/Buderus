@@ -1,12 +1,10 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
-#include <util/delay.h>
-#include <avr/wdt.h>		// Watchdog
-#include <avr/pgmspace.h>	// PROGMEM
-#include <avr/eeprom.h>		// EEPROM
-#include "main.h"
-#include "lan.h"
+//#include <util/delay.h>
+//#include <avr/wdt.h>		// Watchdog
+//#include <avr/pgmspace.h>	// PROGMEM
+//#include "lan.h"
 #include "ntp.h"
 //#include "hd44780.h"
 #include "lcd-routines.h"
@@ -23,14 +21,9 @@
 #include "types.h"
 #include "vars.h"
 #include "defines.h"
-
 #include "vars2.h"
 
 void initialize() {
-	// init Watchdog
-	//wdt_enable(WDTO_2S);
-	//wdt_reset();
-
 	// init Ports
 	DDRA = 0xFF;
 	PORTA = 0;
@@ -84,11 +77,6 @@ void prog(){
 	uint16_t erg;
 
 	while (1) {
-		itoa(opz.ww_opt.soll,buf,10);
-		uart_puts(buf);
-		uart_putc(10);
-		uart_putc(13);
-
 		lan_poll();
 
 		// Time to send NTP request?
