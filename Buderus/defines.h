@@ -60,9 +60,4 @@
 // Diesel/Holz
 #define EEP_ENERGY_SOURCE 141
 
-// IP Adresse des NTP Zeitservers
-//#define NTP_SERVER	inet_addr(62,117,76,142) // funktioniert nicht mehr
-#define NTP_SERVER	inet_addr(192,53,103,108)
-#define TIMEZONE	1
-
 #endif /* DEFINES_H_ */

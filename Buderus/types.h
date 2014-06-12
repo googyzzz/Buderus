@@ -8,13 +8,6 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
-// Datentyp für Temperaturen mit Nachkommastellen
-// millis entspricht 1/10000
-struct temperature_fine{
-	uint8_t degree;
-	uint16_t millis;
-};
-
 
 // Fehler Speichervariable
 struct {

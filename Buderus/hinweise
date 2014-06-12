@@ -1,0 +1,1 @@
+durch Zurücksetzen der Interrupt Flags in der Funktion icp_init() können Timer Interrupts verloren werden!!!

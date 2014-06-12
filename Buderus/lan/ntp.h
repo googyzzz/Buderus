@@ -1,6 +1,11 @@
 #pragma once
 
-#include "lan.h"
+//#include "lan.h"
+
+// IP Adresse des NTP Zeitservers
+//#define NTP_SERVER	inet_addr(62,117,76,142) // funktioniert nicht mehr
+#define NTP_SERVER	inet_addr(192,53,103,108)
+#define TIMEZONE	1
 
 #define NTP_SRV_PORT		htons(123)
 #define NTP_LOCAL_PORT		htons(14444)

@@ -39,4 +39,11 @@ typedef struct tempes {
 	uint8_t exp;
 } tempers;
 
+// Datentyp für Temperaturen mit Nachkommastellen
+// millis entspricht 1/10000
+struct temperature_fine{
+	uint8_t degree;
+	uint16_t millis;
+};
+
 #endif /* TYPES2_H_ */
