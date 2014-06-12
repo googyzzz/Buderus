@@ -8,7 +8,6 @@
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
 #include "timer2.h"
-#include "hd44780.h"
 
 // Zeitinterrupt, nur zur temporären Verwendung (62,5 Hz, 3750 x/min, 16ms delta)
 void timer2_init(){

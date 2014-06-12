@@ -7,7 +7,6 @@
 #include <avr/eeprom.h>
 #include "lan.h"
 #include "ntp.h"
-#include "hd44780.h"
 #include "netcom.h"
 #include "shiftregister.h"
 #include "types.h"

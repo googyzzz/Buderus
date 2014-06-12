@@ -12,8 +12,8 @@
 // Die Pinbelegung ist über defines in lcd-routines.h einstellbar
 
 #include <avr/io.h>
-#include "lcd-routines.h"
 #include <util/delay.h>
+#include "lcd-routines.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Erzeugt einen Enable-Puls
