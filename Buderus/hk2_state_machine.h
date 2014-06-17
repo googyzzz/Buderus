@@ -20,10 +20,6 @@ extern uint8_t ROTATION_TIME;
 
 extern volatile uint16_t shift;
 
-#define MW 4
-#define MK 5
-#define HK2 6
-
 extern volatile uint8_t HK2_timer;
 
 void hk2_state_machine();

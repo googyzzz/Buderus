@@ -5,6 +5,7 @@
  *      Author: googy
  */
 #include <avr/io.h>
+#include "defines.h"
 #include "shiftregister.h"
 #include "hk2_state_machine.h"
 
