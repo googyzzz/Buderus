@@ -20,21 +20,6 @@ extern uint8_t temp_hk2_vorlauf;
 extern volatile uint16_t shift;
 extern uint8_t source_soll;
 
-//extern uint8_t HK1_ist;
-//extern uint8_t HK1_active;
-//extern uint8_t HK1_diff;		// read:write
-//extern uint8_t HK1_soll;
-//extern uint8_t HK1_wait;		// read/write
-//extern uint8_t HK1_state;		// read
-
-extern uint8_t HK2_state;		// read only, aktueller Zustand
-extern uint8_t HK2_soll;		// read/write, Solltemperatur
-extern uint8_t HK2_ist;		// read only, aktuelle Temperatur (nur der letzte gemessene Wert, nur bei aktivem Heizkreis verwenden. [state 1, 2 oder 3])
-extern uint8_t HK2_diff;		// read/write, Regelgenauigkeit in Grad
-extern uint8_t HK2_active;	// read/write, Aktivierungsflag
-extern uint8_t HK2_wait;		// read/write, Wartezeit zwischen den Messungen
-extern uint8_t HK2_present;	// read only
-
 extern struct temperature_fine arbeitsZimmer;
 extern struct temperature_fine schlafZimmer;
 

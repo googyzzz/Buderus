@@ -95,16 +95,16 @@ uint8_t Brenner_status = 0;
 //uint8_t WW_wait = 0;		// read/write
 
 // Bodenheizung Arbeitsvariablen
-uint8_t HK2_state = 0;		// read only, aktueller Zustand
-uint8_t HK2_soll = 0;		// read/write, Solltemperatur
-uint8_t HK2_ist = 0;		// read only, aktuelle Temperatur (nur der letzte gemessene Wert, nur bei aktivem Heizkreis verwenden. [state 1, 2 oder 3])
-uint8_t HK2_diff = 0;		// read/write, Regelgenauigkeit in Grad
-uint8_t HK2_rotate = 0;
-uint8_t ROTATION_TIME = 0;
-uint8_t HK2_direction = 0;
-uint8_t HK2_active = 0x00;	// read/write, Aktivierungsflag
-uint8_t HK2_wait = 0;		// read/write, Wartezeit zwischen den Messungen
-uint8_t HK2_present = 0;	// read only
+//uint8_t HK2_state = 0;		// read only, aktueller Zustand
+//uint8_t HK2_soll = 0;		// read/write, Solltemperatur
+//uint8_t HK2_ist = 0;		// read only, aktuelle Temperatur (nur der letzte gemessene Wert, nur bei aktivem Heizkreis verwenden. [state 1, 2 oder 3])
+//uint8_t HK2_diff = 0;		// read/write, Regelgenauigkeit in Grad
+//uint8_t HK2_rotate = 0;
+//uint8_t ROTATION_TIME = 0;
+//uint8_t HK2_direction = 0;
+//uint8_t HK2_active = 0x00;	// read/write, Aktivierungsflag
+//uint8_t HK2_wait = 0;		// read/write, Wartezeit zwischen den Messungen
+//uint8_t HK2_present = 0;	// read only
 
 volatile uint8_t temperatur;
 volatile uint8_t messtate = 0;

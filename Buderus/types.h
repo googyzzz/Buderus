@@ -35,7 +35,16 @@ struct ww_opt {
 };
 
 struct hk2_opt {
-	uint8_t y;
+	uint8_t state;
+	uint8_t soll;
+	uint8_t ist;
+	uint8_t diff;
+	uint8_t rotate;
+	uint8_t ROTATION_TIME;
+	uint8_t direction;
+	uint8_t active;
+	uint8_t wait;
+	uint8_t present;
 };
 
 struct opts {

@@ -6,16 +6,17 @@
  */
 #include <avr/io.h>
 #include "defines.h"
+#include "types.h"
 #include "shiftregister.h"
 #include "hk2_state_machine.h"
 
 void hk2_state_machine() {
-	switch (HK2_state) {
+	switch (hkopt.hk2.state) {
 	case 0:
-		if (HK2_active) {
+		if (hkopt.hk2.active) {
 			shift |= (1 << HK2); // Bodenheizung Pumpe an
 			shift_set(shift);
-			HK2_state = 1;
+			hkopt.hk2.state = 1;
 			HK2_timer = 0;
 			break;
 		}
@@ -26,22 +27,22 @@ void hk2_state_machine() {
 
 	case 1:
 		// HK2 deaktiviert
-		if (!HK2_active) {
+		if (!hkopt.hk2.active) {
 			shift &= ~(1 << HK2); // Bodenheizung Pumpe aus
 			shift_set(shift);
-			HK2_state = 0; // gehe in default Ruhezustand
+			hkopt.hk2.state = 0; // gehe in default Ruhezustand
 			break;
 		}
 
 		// FM241 nicht vorhanden
-		if (!HK2_present) {
-			HK2_state = 4; // Mudul nicht erkannt, Fehlerzustand
+		if (!hkopt.hk2.present) {
+			hkopt.hk2.state = 4; // Mudul nicht erkannt, Fehlerzustand
 			break;
 		}
 
 		// timeout erreicht, gehe zur aktuellen Messung
-		if (HK2_timer >= HK2_wait) {
-			HK2_state = 2;
+		if (HK2_timer >= hkopt.hk2.wait) {
+			hkopt.hk2.state = 2;
 			HK2_timer = 0; // eigentlich nicht nötig, da in State 2 nicht genutzt
 			break;
 		}
@@ -53,27 +54,27 @@ void hk2_state_machine() {
 		// falls Temperatur nicht ausreichend Pumpe an lassen, aber Mischer eventuell abschalten
 
 		// Vorlauf OK
-		if ((HK2_ist >= (HK2_soll - HK2_diff)) && (HK2_ist <= (HK2_soll
-		        + HK2_diff))) {
-			HK2_state = 1;
+		if ((hkopt.hk2.ist >= (hkopt.hk2.soll - hkopt.hk2.diff)) && (hkopt.hk2.ist <= (hkopt.hk2.soll
+		        + hkopt.hk2.diff))) {
+			hkopt.hk2.state = 1;
 			HK2_timer = 0;
 			break;
 		}
-		if (HK2_ist < (HK2_soll - HK2_diff)) { // Vorlauf kalt
-			HK2_rotate = (HK2_soll - HK2_ist) * ROTATION_TIME;
+		if (hkopt.hk2.ist < (hkopt.hk2.soll - hkopt.hk2.diff)) { // Vorlauf kalt
+			hkopt.hk2.rotate = (hkopt.hk2.soll - hkopt.hk2.ist) * hkopt.hk2.ROTATION_TIME;
 			shift |= (1 << MW); // drehe Mischer auf wärmer
 			shift_set(shift);
-			HK2_state = 3;
+			hkopt.hk2.state = 3;
 			HK2_timer = 0;
 			break;
 
 			// falls Temperatur im Speicher und Kessel zu niedrig ist, Messung verzögern (to-do)
 		}
-		if (HK2_ist > (HK2_soll + HK2_diff)) { // Vorlauf warm
-			HK2_rotate = (HK2_ist - HK2_soll) * ROTATION_TIME;
+		if (hkopt.hk2.ist > (hkopt.hk2.soll + hkopt.hk2.diff)) { // Vorlauf warm
+			hkopt.hk2.rotate = (hkopt.hk2.ist - hkopt.hk2.soll) * hkopt.hk2.ROTATION_TIME;
 			shift |= (1 << MK);
 			shift_set(shift);
-			HK2_state = 3;
+			hkopt.hk2.state = 3;
 			HK2_timer = 0;
 			break;
 		}
@@ -81,8 +82,8 @@ void hk2_state_machine() {
 
 		//		 * Drehung wird durchgeführt
 	case 3:
-		if (HK2_timer >= HK2_rotate) {
-			HK2_state = 1;
+		if (HK2_timer >= hkopt.hk2.rotate) {
+			hkopt.hk2.state = 1;
 			HK2_timer = 0;
 			shift &= ~((1 << MW) | (1 << MK)); // Mischer aus
 			shift_set(shift);
@@ -92,21 +93,21 @@ void hk2_state_machine() {
 		//		 * Fehlerzustand
 
 	case 4:
-		if (!HK2_active) {
-			HK2_state = 0;
+		if (!hkopt.hk2.active) {
+			hkopt.hk2.state = 0;
 			shift &= ~(1 << HK2); // Bodenheizung Pumpe aus
 			shift_set(shift);
 			break;
 		}
 		//shift &= ~(1 << HK2);	// Bodenheizung Pumpe aus
 		//shift_set(shift);
-		if (HK2_present) {
-			HK2_state = 1;
+		if (hkopt.hk2.present) {
+			hkopt.hk2.state = 1;
 			HK2_timer = 0;
 			break;
 		}
 		break;
 	default:
-		HK2_state = 4;
+		hkopt.hk2.state = 4;
 	}
 }

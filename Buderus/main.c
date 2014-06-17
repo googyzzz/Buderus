@@ -52,11 +52,11 @@ void initialize() {
 	hkopt.ww.diff = eeprom_read_byte((uint8_t *) EEP_WW_DIFF);
 	hkopt.ww.wait = eeprom_read_byte((uint8_t *) EEP_WW_WAIT);
 
-	HK2_soll = eeprom_read_byte((uint8_t *) EEP_HK2_SOLL);
-	HK2_diff = eeprom_read_byte((uint8_t *) EEP_HK2_DIFF);
-	ROTATION_TIME = eeprom_read_byte((uint8_t *) EEP_ROTATION_TIME);
-	HK2_active = eeprom_read_byte((uint8_t *) EEP_HK2_ACTIVE);
-	HK2_wait = eeprom_read_byte((uint8_t *) EEP_HK2_WAIT);
+	hkopt.hk2.soll = eeprom_read_byte((uint8_t *) EEP_HK2_SOLL);
+	hkopt.hk2.diff = eeprom_read_byte((uint8_t *) EEP_HK2_DIFF);
+	hkopt.hk2.ROTATION_TIME = eeprom_read_byte((uint8_t *) EEP_ROTATION_TIME);
+	hkopt.hk2.active = eeprom_read_byte((uint8_t *) EEP_HK2_ACTIVE);
+	hkopt.hk2.wait = eeprom_read_byte((uint8_t *) EEP_HK2_WAIT);
 
 	source_soll = eeprom_read_byte((uint8_t *) EEP_ENERGY_SOURCE);
 
@@ -203,15 +203,15 @@ void prog(){
 			erg = messung(3);
 			if (!(erg == 0xFFFF)) {
 				if (erg == 0xFFF0) {
-					HK2_present = FALSE;
+					hkopt.hk2.present = FALSE;
 					errors.FM241_error = TRUE;
 					messtate = 5;
 				} else {
 					errors.FM241_error = FALSE;
 					if (erg < 400) {
-						HK2_present = TRUE;
+						hkopt.hk2.present = TRUE;
 					} else {
-						HK2_present = FALSE;
+						hkopt.hk2.present = FALSE;
 					}
 					messtate = 5;
 				}
@@ -237,12 +237,12 @@ void prog(){
 			erg = messung(6);
 			if (!(erg == 0xFFFF)) {// Messung abgeschlossen
 				if (erg == 0xFFF0) {// Messung fehlgeschlagen, Timmer overflow
-					HK2_ist = 0xFF;
+					hkopt.hk2.ist = 0xFF;
 					errors.hk2_t_error = TRUE;
 					messtate = 0; // probiere nächsten Sensor
 				} else {// Messung erfolgreich
 					errors.hk2_t_error = FALSE;
-					HK2_ist = convert_mt(erg);
+					hkopt.hk2.ist = convert_mt(erg);
 					messtate = 0;
 				}
 			}

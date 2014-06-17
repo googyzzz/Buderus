@@ -39,13 +39,13 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 			data[5] = hkopt.hk1.wait;
 			data[6] = hkopt.hk1.state;
 			// Heizkreis 2
-			data[7] = HK2_active;
-			data[8] = HK2_ist;
-			data[9] = HK2_soll;
-			data[10] = HK2_diff;
-			data[11] = HK2_wait;
-			data[12] = HK2_state;
-			data[13] = HK2_present;
+			data[7] = hkopt.hk2.active;
+			data[8] = hkopt.hk2.ist;
+			data[9] = hkopt.hk2.soll;
+			data[10] = hkopt.hk2.diff;
+			data[11] = hkopt.hk2.wait;
+			data[12] = hkopt.hk2.state;
+			data[13] = hkopt.hk2.present;
 			// Warmwasser
 			data[14] = hkopt.ww.active;
 			data[15] = hkopt.ww.ist;
@@ -106,26 +106,26 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 
 				// Heizkreis 2
 				// EEPROM
-				case 0x20:HK2_active = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK2_ACTIVE, HK2_active);
+				case 0x20:hkopt.hk2.active = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK2_ACTIVE, hkopt.hk2.active);
 					break;
 				case 0x21:
-					HK2_soll = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK2_SOLL, HK2_soll);
+					hkopt.hk2.soll = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK2_SOLL, hkopt.hk2.soll);
 					break;
 				case 0x22:
-					HK2_diff = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK2_DIFF, HK2_diff);
+					hkopt.hk2.diff = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK2_DIFF, hkopt.hk2.diff);
 					break;
 				case 0x23:
-					HK2_wait = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK2_WAIT, HK2_wait);
+					hkopt.hk2.wait = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK2_WAIT, hkopt.hk2.wait);
 					break;
 				// RAM
-				case 0x25:	HK2_active = data[3];	break;
-				case 0x26:	HK2_soll = data[3];		break;
-				case 0x27:	HK2_diff = data[3];		break;
-				case 0x28:	HK2_wait = data[3];		break;
+				case 0x25:	hkopt.hk2.active = data[3];	break;
+				case 0x26:	hkopt.hk2.soll = data[3];		break;
+				case 0x27:	hkopt.hk2.diff = data[3];		break;
+				case 0x28:	hkopt.hk2.wait = data[3];		break;
 
 
 				// Warmwasser
