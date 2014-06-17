@@ -20,12 +20,12 @@ extern uint8_t temp_hk2_vorlauf;
 extern volatile uint16_t shift;
 extern uint8_t source_soll;
 
-extern uint8_t HK1_ist;
-extern uint8_t HK1_active;
-extern uint8_t HK1_diff;		// read:write
-extern uint8_t HK1_soll;
-extern uint8_t HK1_wait;		// read/write
-extern uint8_t HK1_state;		// read
+//extern uint8_t HK1_ist;
+//extern uint8_t HK1_active;
+//extern uint8_t HK1_diff;		// read:write
+//extern uint8_t HK1_soll;
+//extern uint8_t HK1_wait;		// read/write
+//extern uint8_t HK1_state;		// read
 
 extern uint8_t HK2_state;		// read only, aktueller Zustand
 extern uint8_t HK2_soll;		// read/write, Solltemperatur

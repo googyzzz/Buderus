@@ -32,12 +32,12 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 		// steuerkomando (bulk read)
 		if (data[0] == 0x55) {
 			// Heizkreis 1
-			data[1] = HK1_active;
-			data[2] = HK1_ist;
-			data[3] = HK1_soll;
-			data[4] = HK1_diff;
-			data[5] = HK1_wait;
-			data[6] = HK1_state;
+			data[1] = hkopt.hk1.active;
+			data[2] = hkopt.hk1.ist;
+			data[3] = hkopt.hk1.soll;
+			data[4] = hkopt.hk1.diff;
+			data[5] = hkopt.hk1.wait;
+			data[6] = hkopt.hk1.state;
 			// Heizkreis 2
 			data[7] = HK2_active;
 			data[8] = HK2_ist;
@@ -83,26 +83,26 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 				//Heizkreis 1
 				//default EEPROM
 				case 0x10:
-					HK1_active = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK1_ACTIVE, HK1_active);
+					hkopt.hk1.active = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK1_ACTIVE, hkopt.hk1.active);
 					break;
 				case 0x11:
-					HK1_soll = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK1_SOLL, HK1_soll);
+					hkopt.hk1.soll = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK1_SOLL, hkopt.hk1.soll);
 					break;
 				case 0x12:
-					HK1_diff = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK1_DIFF, HK1_diff);
+					hkopt.hk1.diff = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK1_DIFF, hkopt.hk1.diff);
 					break;
 				case 0x13:
-					HK1_wait = data[3];
-					eeprom_write_byte((uint8_t *)EEP_HK1_WAIT, HK1_wait);
+					hkopt.hk1.wait = data[3];
+					eeprom_write_byte((uint8_t *)EEP_HK1_WAIT, hkopt.hk1.wait);
 					break;
 				//temporär RAM
-				case 0x15:	HK1_active = data[3];	break;
-				case 0x16:	HK1_soll = data[3];		break;
-				case 0x17:	HK1_diff = data[3];		break;
-				case 0x18:	HK1_wait = data[3];		break;
+				case 0x15:	hkopt.hk1.active = data[3];		break;
+				case 0x16:	hkopt.hk1.soll = data[3];		break;
+				case 0x17:	hkopt.hk1.diff = data[3];		break;
+				case 0x18:	hkopt.hk1.wait = data[3];		break;
 
 				// Heizkreis 2
 				// EEPROM

@@ -16,6 +16,7 @@
 #include "timer0.h"
 #include "timer2.h"
 #include "netcom.h"
+#include "hk1_state_machine.h"
 #include "hk2_state_machine.h"
 #include "ww_state_machine.h"
 #include "uart.h"
@@ -41,10 +42,10 @@ void initialize() {
 	shift_init();
 
 	// init Parameter
-	HK1_soll = eeprom_read_byte((uint8_t *) EEP_HK1_SOLL);
-	HK1_active = eeprom_read_byte((uint8_t *) EEP_HK1_ACTIVE);
-	HK1_diff = eeprom_read_byte((uint8_t *) EEP_HK1_DIFF);
-	HK1_wait = eeprom_read_byte((uint8_t *) EEP_HK1_WAIT);
+	hkopt.hk1.soll = eeprom_read_byte((uint8_t *) EEP_HK1_SOLL);
+	hkopt.hk1.active = eeprom_read_byte((uint8_t *) EEP_HK1_ACTIVE);
+	hkopt.hk1.diff = eeprom_read_byte((uint8_t *) EEP_HK1_DIFF);
+	hkopt.hk1.wait = eeprom_read_byte((uint8_t *) EEP_HK1_WAIT);
 
 	hkopt.ww.soll = eeprom_read_byte((uint8_t *) EEP_WW_SOLL);
 	hkopt.ww.active = eeprom_read_byte((uint8_t *) EEP_WW_ACTIVE);
@@ -302,55 +303,8 @@ void prog(){
 		default:
 			ow_state = 0;
 		}
-		//---------------------------------------------------------------------------------------------
-		//-----------------state machine Heizkreis 1-----------------------------
-		/*		switch (HK1_state) {
-		 case 0:
-		 if (HK1_active) {
-		 HK1_state = 1;
-		 break;
-		 }
-		 break;
 
-		 case 1:
-		 // Heizkreis 1 deaktiviert
-		 if (!HK1_active){
-		 HK1_state = 0;
-		 shift &= ~(1 << HK1);
-		 shift_set(shift);
-		 break;
-		 }
-
-		 if (HK1_ist > (HK1_soll + HK1_diff)) {
-		 shift &= ~(1 << HK1);	// zu warm, Pumpe aus
-		 shift_set(shift);
-		 }
-		 if (HK1_ist < (HK1_soll - HK1_diff)) {
-		 shift |= (1 << HK1);	// zu kalt, Pumpe an
-		 shift_set(shift);
-		 }
-		 HK1_timer = 0;
-		 HK1_state = 2;	// warten
-		 break;
-
-		 // Warten
-		 case 2:
-		 // Heizkreis 1 deaktiviert
-		 if (!HK1_active){
-		 HK1_state = 0;
-		 shift &= ~(1 << HK1);
-		 shift_set(shift);
-		 break;
-		 }
-		 // timeout
-		 if (HK1_timer > HK1_wait) {
-		 HK1_state = 1;
-		 break;
-		 }
-		 break;
-		 default: HK1_state = 0;
-		 }
-		 */
+		hk1_state_machine();
 		ww_state_machine();
 		hk2_state_machine();
 

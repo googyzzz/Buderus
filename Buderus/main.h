@@ -8,14 +8,14 @@
 #define FALSE 0
 #define TRUE 1
 
-// Schieberegister Pins (schieberegidter 1)
-#define BRENNER 0
-#define HK1 1
-#define WW 2
-#define PZ 3
-#define MW 4
-#define MK 5
-#define HK2 6
+//// Schieberegister Pins (schieberegidter 1)
+//#define BRENNER 0
+//#define HK1 1
+//#define WW 2
+//#define PZ 3
+//#define MW 4
+//#define MK 5
+//#define HK2 6
 // Schieberegister 2 ist für S0, S1, S2 und T5 zuständig
 // S0, S1 und S2 wählen den Temperaturfühler über ein Multiplexer aus
 // T5 ist für das entladen des ADC Kondensators zuständig
@@ -79,12 +79,12 @@ uint8_t Kessel_ist = 0;
 uint8_t Brenner_status = 0;
 
 // Heizkreis 1 Arbeitsvariablen
-uint8_t HK1_soll = 0;		// read/write
-uint8_t HK1_ist = 0;		// read
-uint8_t HK1_active = 0x00;	// read/write
-uint8_t HK1_diff = 0;		// read:write
-uint8_t HK1_wait = 0;		// read/write
-uint8_t HK1_state = 0;		// read
+//uint8_t HK1_soll = 0;		// read/write
+//uint8_t HK1_ist = 0;		// read
+//uint8_t HK1_active = 0x00;	// read/write
+//uint8_t HK1_diff = 0;		// read:write
+//uint8_t HK1_wait = 0;		// read/write
+//uint8_t HK1_state = 0;		// read
 
 // Brauchwasser Arbeitsvariablen
 //uint8_t WW_soll = 0;		// read/write, Solltemperatur
