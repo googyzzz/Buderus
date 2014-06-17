@@ -21,6 +21,9 @@
 #include "ww_state_machine.h"
 #include "uart.h"
 #include "types.h"
+#include "defines.h"
+
+#define SERIAL_DEBUG
 
 void initialize() {
 	// init Watchdog
@@ -167,10 +170,10 @@ void prog(){
 			if (!(erg == 0xFFFF)) { // Messung abgeschlossen
 				if (erg == 0xFFF0) { // Messung fehlgeschlagen, Timmer overflow
 					diesel_t = 0;
-					errors.diesel_t_error = TRUE;
+					errors.diesel_t_error = 1;
 					messtate = 2; // probiere (über)nächsten Sensor
 				} else { // Messung erfolgreich
-					errors.diesel_t_error = FALSE;
+					errors.diesel_t_error = 0;
 					diesel_t = convert_mt(erg);
 					messtate = 2;
 				}
@@ -188,11 +191,11 @@ void prog(){
 			if (!(erg == 0xFFFF)) {
 				if (erg == 0xFFF0) {
 					hkopt.ww.ist = 255;
-					errors.wwasser_t_error = TRUE;
+					errors.wwasser_t_error = 1;
 					messtate = 3;
 				} else {
 					hkopt.ww.ist = convert_mt(erg);
-					errors.wwasser_t_error = FALSE;
+					errors.wwasser_t_error = 0;
 					messtate = 3;
 				}
 			}
@@ -203,15 +206,15 @@ void prog(){
 			erg = messung(3);
 			if (!(erg == 0xFFFF)) {
 				if (erg == 0xFFF0) {
-					hkopt.hk2.present = FALSE;
-					errors.FM241_error = TRUE;
+					hkopt.hk2.present = 0;
+					errors.FM241_error = 1;
 					messtate = 5;
 				} else {
-					errors.FM241_error = FALSE;
+					errors.FM241_error = 0;
 					if (erg < 400) {
-						hkopt.hk2.present = TRUE;
+						hkopt.hk2.present = 1;
 					} else {
-						hkopt.hk2.present = FALSE;
+						hkopt.hk2.present = 0;
 					}
 					messtate = 5;
 				}
@@ -238,10 +241,10 @@ void prog(){
 			if (!(erg == 0xFFFF)) {// Messung abgeschlossen
 				if (erg == 0xFFF0) {// Messung fehlgeschlagen, Timmer overflow
 					hkopt.hk2.ist = 0xFF;
-					errors.hk2_t_error = TRUE;
+					errors.hk2_t_error = 1;
 					messtate = 0; // probiere nächsten Sensor
 				} else {// Messung erfolgreich
-					errors.hk2_t_error = FALSE;
+					errors.hk2_t_error = 0;
 					hkopt.hk2.ist = convert_mt(erg);
 					messtate = 0;
 				}

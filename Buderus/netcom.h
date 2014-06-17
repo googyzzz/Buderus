@@ -15,15 +15,11 @@ uint32_t time_offset;
 extern volatile uint32_t second_count;
 extern uint8_t diesel_t;
 extern uint16_t brenner_status;
-extern uint8_t temp_warmwasser;
-extern uint8_t temp_hk2_vorlauf;
 extern volatile uint16_t shift;
 extern uint8_t source_soll;
 
 extern struct temperature_fine arbeitsZimmer;
 extern struct temperature_fine schlafZimmer;
-
-extern uint8_t energy_source;
 
 #define EEP_HK1_SOLL	128
 #define EEP_HK1_ACTIVE	129
