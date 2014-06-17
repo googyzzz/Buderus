@@ -47,19 +47,19 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 			data[12] = HK2_state;
 			data[13] = HK2_present;
 			// Warmwasser
-			data[14] = WW_active;
-			data[15] = WW_ist;
-			data[16] = WW_soll;
-			data[17] = WW_diff;
-			data[18] = WW_wait;
-			data[19] = WW_state;
+			data[14] = hkopt.ww.active;
+			data[15] = hkopt.ww.ist;
+			data[16] = hkopt.ww.soll;
+			data[17] = hkopt.ww.diff;
+			data[18] = hkopt.ww.wait;
+			data[19] = hkopt.ww.state;
 			// OneWire Sensoren
-			data[20] = Holzkessel;
-			data[21] = Speicher0;
-			data[22] = Speicher1;
-			data[23] = Speicher2;
-			data[24] = Speicher3;
-			data[25] = Speicher4;
+			data[20] = temps.Holzkessel;
+			data[21] = temps.Speicher0;
+			data[22] = temps.Speicher1;
+			data[23] = temps.Speicher2;
+			data[24] = temps.Speicher3;
+			data[25] = temps.Speicher4;
 			data[26] = arbeitsZimmer.degree;
 			data[27] = arbeitsZimmer.millis >> 8;
 			data[28] = arbeitsZimmer.millis & 0xFF;
@@ -131,26 +131,26 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 				// Warmwasser
 				// EEPROM
 				case 0x30:
-					WW_active = data[3];
-					eeprom_write_byte((uint8_t *)EEP_WW_ACTIVE, WW_active);
+					hkopt.ww.active = data[3];
+					eeprom_write_byte((uint8_t *)EEP_WW_ACTIVE, hkopt.ww.active);
 					break;
 				case 0x31:
-					WW_soll = data[3];
-					eeprom_write_byte((uint8_t *)EEP_WW_SOLL, WW_soll);
+					hkopt.ww.soll = data[3];
+					eeprom_write_byte((uint8_t *)EEP_WW_SOLL, hkopt.ww.soll);
 					break;
 				case 0x32:
-					WW_diff = data[3];
-					eeprom_write_byte((uint8_t *)EEP_WW_DIFF, WW_diff);
+					hkopt.ww.diff = data[3];
+					eeprom_write_byte((uint8_t *)EEP_WW_DIFF, hkopt.ww.diff);
 					break;
 				case 0x33:
-					WW_wait = data[3];
-					eeprom_write_byte((uint8_t *)EEP_WW_WAIT, WW_wait);
+					hkopt.ww.wait = data[3];
+					eeprom_write_byte((uint8_t *)EEP_WW_WAIT, hkopt.ww.wait);
 					break;
 				// RAM
-				case 0x35:	WW_active = data[3];	break;
-				case 0x36:	WW_soll = data[3];		break;
-				case 0x37:	WW_diff = data[3];		break;
-				case 0x38:	WW_wait = data[3];		break;
+				case 0x35:	hkopt.ww.active = data[3];	break;
+				case 0x36:	hkopt.ww.soll = data[3];		break;
+				case 0x37:	hkopt.ww.diff = data[3];		break;
+				case 0x38:	hkopt.ww.wait = data[3];		break;
 
 				/////////////////// direktsteuerung
 				case 0x51:

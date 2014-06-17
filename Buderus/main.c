@@ -46,10 +46,10 @@ void initialize() {
 	HK1_diff = eeprom_read_byte((uint8_t *) EEP_HK1_DIFF);
 	HK1_wait = eeprom_read_byte((uint8_t *) EEP_HK1_WAIT);
 
-	WW_soll = eeprom_read_byte((uint8_t *) EEP_WW_SOLL);
-	WW_active = eeprom_read_byte((uint8_t *) EEP_WW_ACTIVE);
-	WW_diff = eeprom_read_byte((uint8_t *) EEP_WW_DIFF);
-	WW_wait = eeprom_read_byte((uint8_t *) EEP_WW_WAIT);
+	hkopt.ww.soll = eeprom_read_byte((uint8_t *) EEP_WW_SOLL);
+	hkopt.ww.active = eeprom_read_byte((uint8_t *) EEP_WW_ACTIVE);
+	hkopt.ww.diff = eeprom_read_byte((uint8_t *) EEP_WW_DIFF);
+	hkopt.ww.wait = eeprom_read_byte((uint8_t *) EEP_WW_WAIT);
 
 	HK2_soll = eeprom_read_byte((uint8_t *) EEP_HK2_SOLL);
 	HK2_diff = eeprom_read_byte((uint8_t *) EEP_HK2_DIFF);
@@ -95,7 +95,7 @@ void prog(){
 	uint16_t erg;
 
 	while (1) {
-		//itoa(Holzkessel,buf,10);
+		//itoa(temps.Holzkessel,buf,10);
 		//uart_puts(buf);
 
 		lan_poll();
@@ -186,11 +186,11 @@ void prog(){
 			erg = messung(2);
 			if (!(erg == 0xFFFF)) {
 				if (erg == 0xFFF0) {
-					WW_ist = 255;
+					hkopt.ww.ist = 255;
 					errors.wwasser_t_error = TRUE;
 					messtate = 3;
 				} else {
-					WW_ist = convert_mt(erg);
+					hkopt.ww.ist = convert_mt(erg);
 					errors.wwasser_t_error = FALSE;
 					messtate = 3;
 				}
@@ -264,27 +264,27 @@ void prog(){
 			}
 			break;
 		case 2: // lese Sensor aus
-			Holzkessel = (ow_temp_id(EEP_OW_HOLZ) >> 4);
+			temps.Holzkessel = (ow_temp_id(EEP_OW_HOLZ) >> 4);
 			ow_state = 3;
 			break;
 		case 3:
-			Speicher0 = (ow_temp_id(EEP_OW_SPEICHER_0) >> 4);
+			temps.Speicher0 = (ow_temp_id(EEP_OW_SPEICHER_0) >> 4);
 			ow_state = 4;
 			break;
 		case 4:
-			Speicher1 = (ow_temp_id(EEP_OW_SPEICHER_1) >> 4);
+			temps.Speicher1 = (ow_temp_id(EEP_OW_SPEICHER_1) >> 4);
 			ow_state = 5;
 			break;
 		case 5:
-			Speicher2 = (ow_temp_id(EEP_OW_SPEICHER_2) >> 4);
+			temps.Speicher2 = (ow_temp_id(EEP_OW_SPEICHER_2) >> 4);
 			ow_state = 6;
 			break;
 		case 6:
-			Speicher3 = (ow_temp_id(EEP_OW_SPEICHER_3) >> 4);
+			temps.Speicher3 = (ow_temp_id(EEP_OW_SPEICHER_3) >> 4);
 			ow_state = 7;
 			break;
 		case 7:
-			Speicher4 = (ow_temp_id(EEP_OW_SPEICHER_4) >> 4);
+			temps.Speicher4 = (ow_temp_id(EEP_OW_SPEICHER_4) >> 4);
 			ow_state = 8;
 			break;
 		case 8:

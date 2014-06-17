@@ -7,28 +7,29 @@
 #include <avr/io.h>
 #include "ww_state_machine.h"
 #include "shiftregister.h"
+#include "types.h"
 
 void ww_state_machine() {
 	//-----------------state machine Warmwasser------------------------------
-	switch (WW_state) {
+	switch (hkopt.ww.state) {
 	case 0: //
-		if (WW_active) {
-			WW_state = 1;
+		if (hkopt.ww.active) {
+			hkopt.ww.state = 1;
 			break;
 		}
 		break;
 	case 1:
 		// wenn Warmwasser deaktiviert, gehe in den Startzustand
-		if (!WW_active) {
-			WW_state = 0;
+		if (!hkopt.ww.active) {
+			hkopt.ww.state = 0;
 			shift &= ~(1 << WW); // Warmwasser Ladepumpe aus
 			shift_set(shift);
 			break;
 		}
 
 		// Warmwasser warm genug, gehe in den Wartezustand
-		if (WW_ist >= WW_soll) {
-			WW_state = 3;
+		if (hkopt.ww.ist >= hkopt.ww.soll) {
+			hkopt.ww.state = 3;
 			WW_timer = 0;
 			shift &= ~(1 << WW); // Warmwasser Ladepumpe aus
 			shift_set(shift);
@@ -38,52 +39,52 @@ void ww_state_machine() {
 		// Kessel Messung durchführen
 		// WW_ist mit Kesseltemperatur vergleichen und gegebenenfalls in Fehlerzustand oder einen gesonderten wechseln
 
-		if ((Speicher1 - WW_diff) <= WW_ist) {
+		if ((temps.Speicher1 - hkopt.ww.diff) <= hkopt.ww.ist) {
 			shift &= ~(1 << WW); // Warmwasser Ladepumpe aus
 			shift_set(shift);
 			WW_timer = 0;
-			WW_state = 3;
+			hkopt.ww.state = 3;
 			break;
 		}
 
 		// Holzkessel ist in Betrieb -> speichere bis max. Temp.
-		if (Holzkessel >= 70 && Speicher1 >= (WW_ist + WW_diff)) {
+		if (temps.Holzkessel >= 70 && temps.Speicher1 >= (hkopt.ww.ist + hkopt.ww.diff)) {
 			shift |= (1 << WW); // Warmwasser Ladepumpe an
 			shift_set(shift);
 			WW_timer = 0;
-			WW_state = 3;
+			hkopt.ww.state = 3;
 			break;
 		}
 		break;
 
-		if (Holzkessel < 70 && WW_ist < Speicher2 - 2) {
+		if (temps.Holzkessel < 70 && hkopt.ww.ist < temps.Speicher2 - 2) {
 			shift |= (1 << WW); // Warmwasser Ladepumpe an
 			shift_set(shift);
 			WW_timer = 0;
-			WW_state = 3;
+			hkopt.ww.state = 3;
 			break;
 		}
 
-		if (Holzkessel < 70 && WW_ist >= Speicher2 - 1) {
+		if (temps.Holzkessel < 70 && hkopt.ww.ist >= temps.Speicher2 - 1) {
 			shift &= ~(1 << WW); // Warmwasser Ladepumpe aus
 			shift_set(shift);
 			WW_timer = 0;
-			WW_state = 3;
+			hkopt.ww.state = 3;
 			break;
 		}
-
+		break;
 	case 2: // unbenutzt
 		// Warmwasser inaktiv
-		if (!WW_active) {
-			WW_state = 0;
+		if (!hkopt.ww.active) {
+			hkopt.ww.state = 0;
 			shift &= ~(1 << WW); // Warmwasser Ladepumpe aus
 			shift_set(shift);
 			break;
 		}
 
 		// Warmwasser zu kalt, heizen
-		if (WW_ist < (WW_soll - WW_diff)) {
-			WW_state = 1;
+		if (hkopt.ww.ist < (hkopt.ww.soll - hkopt.ww.diff)) {
+			hkopt.ww.state = 1;
 			shift |= (1 << WW); // Warmwasser Ladepumpe an
 			shift_set(shift);
 			break;
@@ -96,17 +97,17 @@ void ww_state_machine() {
 
 	case 3:
 		// Warmwasser inaktiv
-		if (!WW_active) {
-			WW_state = 0;
+		if (!hkopt.ww.active) {
+			hkopt.ww.state = 0;
 			shift &= ~(1 << WW); // Warmwasser Ladepumpe aus
 			shift_set(shift);
 			break;
 		}
-		if (WW_timer >= WW_wait) {
-			WW_state = 1;
+		if (WW_timer >= hkopt.ww.wait) {
+			hkopt.ww.state = 1;
 		}
 		break;
 	default:
-		WW_state = 3;
+		hkopt.ww.state = 3;
 	}
 }

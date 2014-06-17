@@ -35,19 +35,6 @@ extern uint8_t HK2_active;	// read/write, Aktivierungsflag
 extern uint8_t HK2_wait;		// read/write, Wartezeit zwischen den Messungen
 extern uint8_t HK2_present;	// read only
 
-extern uint8_t WW_soll;		// read/write, Solltemperatur
-extern uint8_t WW_ist;			// read only, aktuelle Temperatur (nur bei aktiviertem Warmwasser auslesen ansonsten besser gesondert)
-extern uint8_t WW_state;		// read only, aktueller Zustand
-extern uint8_t WW_active;	// read/write, Aktivierungsflag
-extern uint8_t WW_diff;		// read/write, offset für erneute Aufwärmung
-extern uint8_t WW_wait;		// read/write
-
-extern uint8_t Holzkessel;
-extern uint8_t Speicher0;
-extern uint8_t Speicher1;
-extern uint8_t Speicher2;
-extern uint8_t Speicher3;
-extern uint8_t Speicher4;
 extern struct temperature_fine arbeitsZimmer;
 extern struct temperature_fine schlafZimmer;
 

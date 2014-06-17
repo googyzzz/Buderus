@@ -56,13 +56,6 @@
 
 uint8_t energy_source = 0;
 
-//OneWire Sensoren Wertvariable
-uint8_t Holzkessel = 0;
-uint8_t Speicher0 = 0;
-uint8_t Speicher1 = 0;
-uint8_t Speicher2 = 0;
-uint8_t Speicher3 = 0;
-uint8_t Speicher4 = 0;
 struct temperature_fine arbeitsZimmer;
 struct temperature_fine schlafZimmer;
 
@@ -94,12 +87,12 @@ uint8_t HK1_wait = 0;		// read/write
 uint8_t HK1_state = 0;		// read
 
 // Brauchwasser Arbeitsvariablen
-uint8_t WW_soll = 0;		// read/write, Solltemperatur
-uint8_t WW_ist = 0;			// read only, aktuelle Temperatur (nur bei aktiviertem Warmwasser auslesen ansonsten besser gesondert)
-uint8_t WW_state = 0;		// read only, aktueller Zustand
-uint8_t WW_active = 0x00;	// read/write, Aktivierungsflag
-uint8_t WW_diff = 0;		// read/write, offset für erneute Aufwärmung
-uint8_t WW_wait = 0;		// read/write
+//uint8_t WW_soll = 0;		// read/write, Solltemperatur
+//uint8_t WW_ist = 0;			// read only, aktuelle Temperatur (nur bei aktiviertem Warmwasser auslesen ansonsten besser gesondert)
+//uint8_t WW_state = 0;		// read only, aktueller Zustand
+//uint8_t WW_active = 0x00;	// read/write, Aktivierungsflag
+//uint8_t WW_diff = 0;		// read/write, offset für erneute Aufwärmung
+//uint8_t WW_wait = 0;		// read/write
 
 // Bodenheizung Arbeitsvariablen
 uint8_t HK2_state = 0;		// read only, aktueller Zustand
