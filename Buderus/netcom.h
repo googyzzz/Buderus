@@ -12,7 +12,6 @@
 
 volatile uint32_t ntp_next_update;
 uint32_t time_offset;
-extern volatile uint32_t second_count;
 extern uint8_t diesel_t;
 extern uint16_t brenner_status;
 extern volatile uint16_t shift;

@@ -65,7 +65,6 @@ void initialize() {
 
 
 	// Zähler für Uhr
-	timer = 0;
 	timer2_init();
 
 	sei();

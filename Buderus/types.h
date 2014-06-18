@@ -67,4 +67,20 @@ struct temperatures{
 
 extern struct temperatures temps;
 
+
+// Energiequelle
+enum sources_t{
+	HOLZ,
+	HEIZOEL,
+	UNBEKANNT,
+	OFF
+};
+
+extern uint8_t source_timer;
+extern enum sources_t source_ist;
+extern enum sources_t source_soll;	// in EEPROM ablegen
+extern enum sources_t source_turn;
+
+extern volatile uint32_t second_count;
+
 #endif /* TYPES_H_ */

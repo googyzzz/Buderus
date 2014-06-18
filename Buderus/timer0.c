@@ -7,7 +7,12 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "timer0.h"
+#include "types.h"
 
+volatile uint8_t display_timer = 0;
+volatile uint8_t OW_timer = 0;
+volatile uint8_t WW_timer = 0;
+volatile uint8_t HK2_timer = 0;
 
 // Timer 0 init (freq = 1 kHz @ CLK = 16 MHz)
 void timer0_init() {
@@ -26,7 +31,6 @@ ISR(TIMER0_COMP_vect) {
 		HK1_timer++;
 		WW_timer++;
 		display_timer++;
-		refresh_timer++;
 		source_timer++;
 	}
 }

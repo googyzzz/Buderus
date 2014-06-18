@@ -50,28 +50,7 @@ uint8_t messtate = 0;	// nur in main bei Buderus Messung
 volatile uint8_t minuten = 0;	// main und timer2
 volatile uint8_t HK1_timer = 0;	// hk1 und timer0
 
-// Timer zur Heizkreis 2 Steuerung
-volatile uint8_t HK2_timer = 0;		// hk2 und timer0
-volatile uint8_t WW_timer = 0;	// ww und timer0
-volatile uint8_t OW_timer = 0;	// main und timer0
-volatile uint8_t display_timer = 0;	// main und timer0
-volatile uint8_t refresh_timer = 0;	// main und timer0
-
-volatile uint16_t timer;	// timer2 messung main
-
-volatile uint16_t ms_count;				// Milisekunden Zähler für ISR
-volatile uint32_t second_count;
-
-// Energiequelle
-enum sources_t{
-	HOLZ,
-	HEIZOEL,
-	UNBEKANNT,
-	OFF
-};
-uint8_t volatile source_timer = 0;
-enum sources_t source_ist = UNBEKANNT;
-enum sources_t source_soll = UNBEKANNT;	// in EEPROM ablegen
-enum sources_t source_turn = OFF;
+extern volatile uint8_t OW_timer;	// von timer0 getrieben
+extern volatile uint8_t display_timer;	// für refreshrate des LCD, von timer0 getrieben
 
 #endif /* MAIN_H_ */
