@@ -13,7 +13,7 @@
 #include "ow.h"
 #include "messung.h"
 #include "shiftregister.h"
-#include "timer0.h"
+#include "timers/timer0.h"
 #include "netcom.h"
 #include "hk1_state_machine.h"
 #include "hk2_state_machine.h"
@@ -95,7 +95,7 @@ void prog(){
 	uint16_t erg;
 
 	while (1) {
-		itoa(temps.Holzkessel,buf,10);
+		itoa(ms_count,buf,10);
 		uart_puts(buf);
 		uart_putc(10);
 		uart_putc(13);

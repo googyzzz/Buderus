@@ -17,7 +17,9 @@ extern volatile uint8_t WW_timer;
 extern volatile uint8_t OW_timer;
 extern volatile uint8_t display_timer;
 
+extern volatile uint32_t second_count;
 volatile uint16_t ms_count;				// Milisekunden Zähler für ISR
+
 
 extern uint8_t source_timer;
 

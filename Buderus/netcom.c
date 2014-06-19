@@ -11,6 +11,7 @@
 #include "shiftregister.h"
 #include "types.h"
 #include "defines.h"
+#include "timers/timer0.h"
 
 void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 {

@@ -80,8 +80,6 @@ struct temperatures{
 
 extern struct temperatures temps;
 
-extern volatile uint32_t second_count;
-
 #endif /* TYPES_H_ */
 
 
