@@ -6,8 +6,8 @@
  */
 #include <avr/io.h>
 #include "ww_state_machine.h"
-#include "shiftregister.h"
-#include "types.h"
+#include "../shiftregister.h"
+#include "../types.h"
 
 void ww_state_machine() {
 	//-----------------state machine Warmwasser------------------------------

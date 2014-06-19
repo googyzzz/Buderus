@@ -14,6 +14,7 @@ volatile uint8_t WW_timer = 0;
 volatile uint8_t HK2_timer = 0;
 volatile uint8_t HK1_timer = 0;
 volatile uint8_t Mess_timer = 0;
+volatile uint16_t ms_count = 0;				// Milisekunden Zähler für ISR
 volatile uint32_t second_count = 0;
 
 // Timer 0 init (freq = 1 kHz @ CLK = 16 MHz)

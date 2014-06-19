@@ -5,9 +5,9 @@
  *      Author: googy
  */
 #include <avr/io.h>
-#include "defines.h"
-#include "types.h"
-#include "shiftregister.h"
+#include "../defines.h"
+#include "../types.h"
+#include "../shiftregister.h"
 #include "hk2_state_machine.h"
 
 void hk2_state_machine() {

@@ -5,9 +5,9 @@
  *      Author: googy_000
  */
 #include "hk1_state_machine.h"
-#include "defines.h"
-#include "types.h"
-#include "shiftregister.h"
+#include "../defines.h"
+#include "../types.h"
+#include "../shiftregister.h"
 
 void hk1_state_machine() {
 //---------------------------------------------------------------------------------------------

@@ -6,18 +6,17 @@
 #include <avr/pgmspace.h>	// PROGMEM
 #include <avr/eeprom.h>		// EEPROM
 #include "main.h"
-#include "lan.h"
-#include "ntp.h"
-//#include "hd44780.h"
+#include "network/lan.h"
+#include "network/ntp.h"
 #include "lcd-routines.h"
 #include "ow.h"
 #include "messung.h"
 #include "shiftregister.h"
 #include "timers/timer0.h"
-#include "netcom.h"
-#include "hk1_state_machine.h"
-#include "hk2_state_machine.h"
-#include "ww_state_machine.h"
+#include "network/netcom.h"
+#include "state_machines/hk1_state_machine.h"
+#include "state_machines/hk2_state_machine.h"
+#include "state_machines/ww_state_machine.h"
 #include "uart.h"
 #include "types.h"
 #include "defines.h"
@@ -95,10 +94,10 @@ void prog(){
 	uint16_t erg;
 
 	while (1) {
-		itoa(ms_count,buf,10);
-		uart_puts(buf);
-		uart_putc(10);
-		uart_putc(13);
+//		itoa(ms_count,buf,10);
+//		uart_puts(buf);
+//		uart_putc(10);
+//		uart_putc(13);
 
 		lan_poll();
 

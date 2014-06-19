@@ -8,7 +8,7 @@
 #ifndef NETCOM_H_
 #define NETCOM_H_
 
-#include "types.h"
+#include "../types.h"
 
 volatile uint32_t ntp_next_update;
 uint32_t time_offset;
