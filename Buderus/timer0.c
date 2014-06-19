@@ -13,6 +13,8 @@ volatile uint8_t display_timer = 0;
 volatile uint8_t OW_timer = 0;
 volatile uint8_t WW_timer = 0;
 volatile uint8_t HK2_timer = 0;
+volatile uint8_t HK1_timer = 0;
+volatile uint8_t Mess_timer = 0;
 
 // Timer 0 init (freq = 1 kHz @ CLK = 16 MHz)
 void timer0_init() {
@@ -33,4 +35,5 @@ ISR(TIMER0_COMP_vect) {
 		display_timer++;
 		source_timer++;
 	}
+	Mess_timer++;
 }

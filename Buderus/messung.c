@@ -54,11 +54,11 @@ uint16_t messung(uint8_t channel) {
 		shift_set(shift);		// Kondensator Entladetransistor T5 einschalten
 		mval = 0;				// Zähler initialisieren
 
-		timer = 0;
+		Mess_timer = 0;
 		state = 1;
 		break;
 	case 1:
-		if (timer > 10) {
+		if (Mess_timer > 200) {
 			state = 2;
 			break;
 		}

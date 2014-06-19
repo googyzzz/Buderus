@@ -10,6 +10,7 @@
 
 void timer0_init();
 
+extern volatile uint8_t Mess_timer;
 extern volatile uint8_t HK1_timer;
 extern volatile uint8_t HK2_timer;
 extern volatile uint8_t WW_timer;

@@ -10,6 +10,7 @@
 #include "netcom.h"
 #include "shiftregister.h"
 #include "types.h"
+#include "defines.h"
 
 void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 {
@@ -66,8 +67,8 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 			data[29] = schlafZimmer.degree;
 			data[30] = schlafZimmer.millis >> 8;
 			data[31] = schlafZimmer.millis & 0xFF;
-			data[32] = diesel_t;
-			data[33] = (brenner_status >> 8);
+			data[32] = temps.Buderus;
+			data[33] = (temps.brenner_status >> 8);
 			data[34] = shift;
 			length = 35;
 			//sende Antwort
@@ -162,7 +163,7 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 					shift_set(shift);
 					break;
 				case 0x52:
-					source_soll = data[3];
+					temps.source_soll = data[3];
 					eeprom_write_byte((uint8_t *)EEP_ENERGY_SOURCE, data[3]);
 					break;
 				case 0x53:

@@ -14,7 +14,6 @@
 #include "messung.h"
 #include "shiftregister.h"
 #include "timer0.h"
-#include "timer2.h"
 #include "netcom.h"
 #include "hk1_state_machine.h"
 #include "hk2_state_machine.h"
@@ -24,6 +23,9 @@
 #include "defines.h"
 
 #define SERIAL_DEBUG
+
+
+uint8_t messtate = 0;	// nur in main bei Buderus Messung
 
 void initialize() {
 	// init Watchdog
@@ -61,11 +63,7 @@ void initialize() {
 	hkopt.hk2.active = eeprom_read_byte((uint8_t *) EEP_HK2_ACTIVE);
 	hkopt.hk2.wait = eeprom_read_byte((uint8_t *) EEP_HK2_WAIT);
 
-	source_soll = eeprom_read_byte((uint8_t *) EEP_ENERGY_SOURCE);
-
-
-	// Zähler für Uhr
-	timer2_init();
+	temps.source_soll = eeprom_read_byte((uint8_t *) EEP_ENERGY_SOURCE);
 
 	sei();
 
@@ -77,7 +75,6 @@ void initialize() {
 
 	// Init LAN
 	lan_init();
-	lan_poll();
 
 	// init OneWire
 	ow_init();
@@ -98,8 +95,10 @@ void prog(){
 	uint16_t erg;
 
 	while (1) {
-		//itoa(temps.Holzkessel,buf,10);
-		//uart_puts(buf);
+		itoa(temps.Holzkessel,buf,10);
+		uart_puts(buf);
+		uart_putc(10);
+		uart_putc(13);
 
 		lan_poll();
 
@@ -120,11 +119,6 @@ void prog(){
 			s = loctime % 60;
 			m = (loctime / 60) % 60;
 			h = (loctime / 3600) % 24;
-		}
-
-		if (minuten >= 1) {
-			lcd_init();
-			minuten = 0;
 		}
 
 		if (display_timer) {
@@ -168,12 +162,12 @@ void prog(){
 			erg = messung(0);
 			if (!(erg == 0xFFFF)) { // Messung abgeschlossen
 				if (erg == 0xFFF0) { // Messung fehlgeschlagen, Timmer overflow
-					diesel_t = 0;
-					errors.diesel_t_error = 1;
+					temps.Buderus = 0;
+					//errors.diesel_t_error = 1;
 					messtate = 2; // probiere (über)nächsten Sensor
 				} else { // Messung erfolgreich
-					errors.diesel_t_error = 0;
-					diesel_t = convert_mt(erg);
+					//errors.diesel_t_error = 0;
+					temps.Buderus = convert_mt(erg);
 					messtate = 2;
 				}
 			}
@@ -190,11 +184,11 @@ void prog(){
 			if (!(erg == 0xFFFF)) {
 				if (erg == 0xFFF0) {
 					hkopt.ww.ist = 255;
-					errors.wwasser_t_error = 1;
+					//errors.wwasser_t_error = 1;
 					messtate = 3;
 				} else {
 					hkopt.ww.ist = convert_mt(erg);
-					errors.wwasser_t_error = 0;
+					//errors.wwasser_t_error = 0;
 					messtate = 3;
 				}
 			}
@@ -206,10 +200,10 @@ void prog(){
 			if (!(erg == 0xFFFF)) {
 				if (erg == 0xFFF0) {
 					hkopt.hk2.present = 0;
-					errors.FM241_error = 1;
+					//errors.FM241_error = 1;
 					messtate = 5;
 				} else {
-					errors.FM241_error = 0;
+					//errors.FM241_error = 0;
 					if (erg < 400) {
 						hkopt.hk2.present = 1;
 					} else {
@@ -225,10 +219,10 @@ void prog(){
 			erg = messung(5);
 			if (!(erg == 0xFFFF)) { // Messung abgeschlossen
 				if (erg == 0xFFF0) { // Messung fehlgeschlagen, Timmer overflow
-					brenner_status = 0;
+					temps.brenner_status = 0;
 					messtate = 6; // probiere nächsten Sensor
 				} else { // Messung erfolgreich
-					brenner_status = erg;
+					temps.brenner_status = erg;
 					messtate = 6;
 				}
 			}
@@ -240,10 +234,10 @@ void prog(){
 			if (!(erg == 0xFFFF)) {// Messung abgeschlossen
 				if (erg == 0xFFF0) {// Messung fehlgeschlagen, Timmer overflow
 					hkopt.hk2.ist = 0xFF;
-					errors.hk2_t_error = 1;
+					//errors.hk2_t_error = 1;
 					messtate = 0; // probiere nächsten Sensor
 				} else {// Messung erfolgreich
-					errors.hk2_t_error = 0;
+					//errors.hk2_t_error = 0;
 					hkopt.hk2.ist = convert_mt(erg);
 					messtate = 0;
 				}
@@ -313,25 +307,25 @@ void prog(){
 		// Energiequelle
 		// source_turn hat 3 Zustände
 		// zu Holz drehen, zu Diesel drehen, aus
-		if ((source_ist != source_soll) || (source_turn != OFF)) {	// Quelle hat sich geändert oder Mischer in Bewegung
-			if (source_turn != source_soll) {
-				source_turn = OFF;
+		if ((temps.source_ist != temps.source_soll) || (temps.source_turn != OFF)) {	// Quelle hat sich geändert oder Mischer in Bewegung
+			if (temps.source_turn != temps.source_soll) {
+				temps.source_turn = OFF;
 			}
-			if (source_turn == OFF) {
-				source_turn = source_soll;
+			if (temps.source_turn == OFF) {
+				temps.source_turn = temps.source_soll;
 				source_timer = 0;
 				PORTA &= ~((1 << PA3) | (1 << PA2));
-				if (source_turn == HOLZ) {
+				if (temps.source_turn == HOLZ) {
 					PORTA |= (1 << PA3);
-				} else if (source_turn == HEIZOEL) {
+				} else if (temps.source_turn == HEIZOEL) {
 					PORTA |= (1 << PA2);
 				}
 			}
 			// Motor dreht, warte
 			if (source_timer >= 130) {
 				PORTA &= ~((1 << PA3) | (1 << PA2));
-				source_ist = source_turn;
-				source_turn = OFF;
+				temps.source_ist = temps.source_turn;
+				temps.source_turn = OFF;
 			}
 		}
 	}
