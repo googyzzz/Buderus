@@ -68,7 +68,7 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 			data[29] = schlafZimmer.degree;
 			data[30] = schlafZimmer.millis >> 8;
 			data[31] = schlafZimmer.millis & 0xFF;
-			data[32] = temps.Buderus;
+			data[32] = hkopt.source.buderus_temp;
 			data[33] = (temps.brenner_status >> 8);
 			data[34] = shift;
 			length = 35;

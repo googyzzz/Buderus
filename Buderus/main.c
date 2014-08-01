@@ -2,8 +2,8 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <util/delay.h>
-#include <avr/wdt.h>		// Watchdog
-#include <avr/pgmspace.h>	// PROGMEM
+//#include <avr/wdt.h>		// Watchdog
+//#include <avr/pgmspace.h>	// PROGMEM
 #include <avr/eeprom.h>		// EEPROM
 #include "main.h"
 #include "network/lan.h"
@@ -161,12 +161,12 @@ void prog(){
 			erg = messung(0);
 			if (!(erg == 0xFFFF)) { // Messung abgeschlossen
 				if (erg == 0xFFF0) { // Messung fehlgeschlagen, Timmer overflow
-					temps.Buderus = 0;
+					hkopt.source.buderus_temp = 0;
 					//errors.diesel_t_error = 1;
 					messtate = 2; // probiere (über)nächsten Sensor
 				} else { // Messung erfolgreich
 					//errors.diesel_t_error = 0;
-					temps.Buderus = convert_mt(erg);
+					hkopt.source.buderus_temp = convert_mt(erg);
 					messtate = 2;
 				}
 			}
@@ -325,6 +325,19 @@ void prog(){
 				PORTA &= ~((1 << PA3) | (1 << PA2));
 				temps.source_ist = temps.source_turn;
 				temps.source_turn = OFF;
+			}
+		}
+
+		hkopt.source.buderus_temp_min = 50;
+		hkopt.source.buderus_temp_diff = 5;
+		hkopt.source.buderus_temp_max = 70;
+		if (hkopt.source.need_energy && (temps.source_ist == HEIZOEL)) {
+			if (!(shift & (1 << BRENNER)) && hkopt.source.buderus_temp < (hkopt.source.buderus_temp_max - hkopt.source.buderus_temp_diff)) {
+				shift |= (1 << BRENNER);
+				shift_set(shift);
+			} else if ((shift & (1 << BRENNER)) && hkopt.source.buderus_temp >= hkopt.source.buderus_temp_max){
+				shift &= ~(1 << BRENNER);
+				shift_set(shift);
 			}
 		}
 	}

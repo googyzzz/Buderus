@@ -8,8 +8,6 @@
 #ifndef WW_STATE_MACHINE_H_
 #define WW_STATE_MACHINE_H_
 
-#define WW 2
-
 extern volatile uint16_t shift;
 extern volatile uint8_t WW_timer;
 

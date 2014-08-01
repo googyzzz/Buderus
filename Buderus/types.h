@@ -9,11 +9,36 @@
 #define TYPES_H_
 #include <avr/io.h>	// uint8_t types
 
+// Energiequelle
+enum sources_t{
+	HOLZ,
+	HEIZOEL,
+	UNBEKANNT,
+	OFF
+};
+
 // Datentyp für Temperaturen mit Nachkommastellen
 // millis entspricht 1/10000
 struct temperature_fine{
 	uint8_t degree;
 	uint16_t millis;
+};
+
+struct source_opt {
+	enum sources_t source_selected;
+	uint8_t buderus_state;
+	uint8_t buderus_temp;
+	uint8_t buderus_temp_max;
+	uint8_t buderus_temp_diff;
+	uint8_t buderus_temp_min;
+	uint8_t atmos_state;
+	uint8_t atmos_temp;
+	uint8_t need_energy;
+	uint8_t speicher0;
+	uint8_t speicher1;
+	uint8_t speicher2;
+	uint8_t speicher3;
+	uint8_t speicher4;
 };
 
 struct hk1_opt {
@@ -48,20 +73,13 @@ struct hk2_opt {
 };
 
 struct opts {
+	struct source_opt source;
 	struct hk1_opt	hk1;
 	struct ww_opt	ww;
 	struct hk2_opt	hk2;
 };
 
 extern struct opts hkopt;
-
-// Energiequelle
-enum sources_t{
-	HOLZ,
-	HEIZOEL,
-	UNBEKANNT,
-	OFF
-};
 
 struct temperatures{
 	uint8_t Holzkessel;
@@ -71,7 +89,6 @@ struct temperatures{
 	uint8_t Speicher3;
 	uint8_t Speicher4;
 	uint8_t experimentell;
-	uint8_t Buderus;
 	uint16_t brenner_status;
 	enum sources_t source_ist;
 	uint8_t source_soll;
