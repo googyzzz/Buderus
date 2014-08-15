@@ -9,17 +9,13 @@
 #include "../shiftregister.h"
 #include "../types.h"
 #include "../defines.h"
-
 #include "../uart.h"
 
 void ww_state_machine() {
 	//-----------------state machine Warmwasser------------------------------
 	switch (hkopt.ww.state) {
 	case 0:
-		uart_puts("wasser aus");
-		uart_putc(10);
-		uart_putc(13);
-		// prüfen ob Warmwasser überhaupt eingeschaltet ist
+		// prüfen ob Warmwasser überhaupt aktiviert ist
 		if (hkopt.ww.active) {
 			hkopt.ww.state = 1;
 		}
@@ -31,6 +27,16 @@ void ww_state_machine() {
 			break;
 		}
 
+// TODO
+//		if kessel > 50 und ww < 50
+//			heize nochmals kurz nach
+
+//		if (hkopt.source.source_selected) {
+
+//		}
+
+
+		// Wasser ist kalt und muss erwärmt werden
 		if (hkopt.ww.ist < (hkopt.ww.soll - hkopt.ww.diff)) {	// wasser kalt
 			hkopt.source.need_energy = 1;
 			hkopt.ww.state = 3;

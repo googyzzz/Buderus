@@ -45,6 +45,15 @@ void initialize() {
 	uart_init();
 	shift_init();
 
+/*	eeprom_write_byte((uint8_t *)0, 0x28);
+	eeprom_write_byte((uint8_t *)1, 0xAE);
+	eeprom_write_byte((uint8_t *)2, 0x67);
+	eeprom_write_byte((uint8_t *)3, 0xAA);
+	eeprom_write_byte((uint8_t *)4, 0x03);
+	eeprom_write_byte((uint8_t *)5, 0x00);
+	eeprom_write_byte((uint8_t *)6, 0x00);
+	eeprom_write_byte((uint8_t *)7, 0x47);*/
+
 	// init Parameter
 	hkopt.hk1.soll = eeprom_read_byte((uint8_t *) EEP_HK1_SOLL);
 	hkopt.hk1.active = eeprom_read_byte((uint8_t *) EEP_HK1_ACTIVE);
