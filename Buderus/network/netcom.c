@@ -12,6 +12,7 @@
 #include "../types.h"
 #include "../defines.h"
 #include "../timers/timer0.h"
+#include "../main.h"
 
 void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 {
@@ -56,12 +57,12 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 			data[18] = hkopt.ww.wait;
 			data[19] = hkopt.ww.state;
 			// OneWire Sensoren
-			data[20] = temps.Holzkessel;
-			data[21] = temps.Speicher0;
-			data[22] = temps.Speicher1;
-			data[23] = temps.Speicher2;
-			data[24] = temps.Speicher3;
-			data[25] = temps.Speicher4;
+			data[20] = hkopt.source.atmos_temp;
+			data[21] = hkopt.source.speicher0;
+			data[22] = hkopt.source.speicher1;
+			data[23] = hkopt.source.speicher2;
+			data[24] = hkopt.source.speicher3;
+			data[25] = hkopt.source.speicher4;
 			data[26] = arbeitsZimmer.degree;
 			data[27] = arbeitsZimmer.millis >> 8;
 			data[28] = arbeitsZimmer.millis & 0xFF;
@@ -69,7 +70,7 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 			data[30] = schlafZimmer.millis >> 8;
 			data[31] = schlafZimmer.millis & 0xFF;
 			data[32] = hkopt.source.buderus_temp;
-			data[33] = (temps.brenner_status >> 8);
+			data[33] = (hkopt.source.brenner_state >> 8);
 			data[34] = shift;
 			length = 35;
 			//sende Antwort
@@ -164,7 +165,7 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 					shift_set(shift);
 					break;
 				case 0x52:
-					temps.source_soll = data[3];
+					hkopt.source.source_soll = data[3];
 					eeprom_write_byte((uint8_t *)EEP_ENERGY_SOURCE, data[3]);
 					break;
 				case 0x53:
@@ -190,6 +191,9 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 						shift &= ~(1 << PZ);
 					}
 					shift_set(shift);
+					break;
+				case 0x56:
+					notreset = 0;
 					break;
 				default: data[3] = 0x00;
 				}

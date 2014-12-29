@@ -2,14 +2,14 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <util/delay.h>
-//#include <avr/wdt.h>		// Watchdog
+#include <avr/wdt.h>		// Watchdog
 //#include <avr/pgmspace.h>	// PROGMEM
 #include <avr/eeprom.h>		// EEPROM
 #include "main.h"
 #include "network/lan.h"
 #include "network/ntp.h"
 #include "lcd-routines.h"
-#include "ow.h"
+#include "DS18B20/ow.h"
 #include "messung.h"
 #include "shiftregister.h"
 #include "timers/timer0.h"
@@ -23,13 +23,13 @@
 
 #define SERIAL_DEBUG
 
-
 uint8_t messtate = 0;	// nur in main bei Buderus Messung
 
 void initialize() {
 	// init Watchdog
-	//wdt_enable(WDTO_2S);
+	wdt_enable(WDTO_2S);
 	//wdt_reset();
+	notreset = 1;
 
 	// init Ports
 	DDRA = 0xFF;
@@ -38,12 +38,22 @@ void initialize() {
 	PORTB = 0;
 	DDRC = 0xFF;
 	PORTC = 0;
-	DDRD = 1;
+	DDRD = 1;		// Port D0 als eingang???
 	PORTD = 0xFF;
 
 	lcd_init();
 	uart_init();
 	shift_init();
+
+	//write EEPROM
+//	eeprom_write_byte((uint8_t *) 48, 0x28);
+
+	// read EEPROM
+//	uint8_t z = 0;
+//	char bu[3];
+//	z = eeprom_read_byte((uint8_t *) 16);
+//	itoa(z, bu, 16);
+//	uart_puts(bu);
 
 	// init Parameter
 	hkopt.hk1.soll = eeprom_read_byte((uint8_t *) EEP_HK1_SOLL);
@@ -62,7 +72,17 @@ void initialize() {
 	hkopt.hk2.active = eeprom_read_byte((uint8_t *) EEP_HK2_ACTIVE);
 	hkopt.hk2.wait = eeprom_read_byte((uint8_t *) EEP_HK2_WAIT);
 
-	temps.source_soll = eeprom_read_byte((uint8_t *) EEP_ENERGY_SOURCE);
+	hkopt.source.source_soll = eeprom_read_byte((uint8_t *) EEP_ENERGY_SOURCE);
+	// nachdem Start ist die aktuelle Mischerposition unbekannt
+	hkopt.source.source_ist = UNBEKANNT;
+
+	// FIXME brennerwerte aus dem eeprom:
+	hkopt.source.buderus_temp_min = 50;
+	hkopt.source.buderus_temp_diff = 5;
+	hkopt.source.buderus_temp_max = 70;
+
+	hkopt.source.buderus_on = 0;
+
 
 	sei();
 
@@ -83,8 +103,6 @@ void initialize() {
 void prog(){
 	initialize();
 
-	char buf[20];
-
 	uint8_t ow_state = 0;
 
 	uint32_t display_next_update = 0;
@@ -93,12 +111,20 @@ void prog(){
 
 	uint16_t erg;
 
-	while (1) {
-//		itoa(ms_count,buf,10);
-//		uart_puts(buf);
-//		uart_putc(10);
-//		uart_putc(13);
+	// heartbeat
+	uint8_t zuzu = 0;
+	char bufu[5];
 
+	while (1) {
+		zuzu++;
+		itoa(zuzu, bufu, 10);
+		uart_puts(bufu);
+		uart_putc(10);
+		uart_putc(13);
+
+		if (notreset) {
+			wdt_reset();
+		}
 		lan_poll();
 
 		// Time to send NTP request?
@@ -118,6 +144,7 @@ void prog(){
 			s = loctime % 60;
 			m = (loctime / 60) % 60;
 			h = (loctime / 3600) % 24;
+			hour = h;
 		}
 
 		if (display_timer) {
@@ -162,6 +189,7 @@ void prog(){
 			if (!(erg == 0xFFFF)) { // Messung abgeschlossen
 				if (erg == 0xFFF0) { // Messung fehlgeschlagen, Timmer overflow
 					hkopt.source.buderus_temp = 0;
+					// TODO zentraler Fehlerspeicher
 					//errors.diesel_t_error = 1;
 					messtate = 2; // probiere (über)nächsten Sensor
 				} else { // Messung erfolgreich
@@ -218,10 +246,10 @@ void prog(){
 			erg = messung(5);
 			if (!(erg == 0xFFFF)) { // Messung abgeschlossen
 				if (erg == 0xFFF0) { // Messung fehlgeschlagen, Timmer overflow
-					temps.brenner_status = 0;
+					hkopt.source.brenner_state = 0;
 					messtate = 6; // probiere nächsten Sensor
 				} else { // Messung erfolgreich
-					temps.brenner_status = erg;
+					hkopt.source.brenner_state = erg;
 					messtate = 6;
 				}
 			}
@@ -254,33 +282,37 @@ void prog(){
 			ow_state = 1;
 			OW_timer = 0;
 			break;
-		case 1: // warte bis Messung abgeschlossen ist
+		case 1: // warte 2s bis Messung abgeschlossen ist
 			if (OW_timer >= 2) {
 				ow_state = 2;
 			}
 			break;
 		case 2: // lese Sensor aus
-			temps.Holzkessel = (ow_temp_id(EEP_OW_HOLZ) >> 4);
+			// FIXME Plausibilitätsprüfung, Fehler notieren!!!
+			hkopt.source.atmos_temp = (ow_temp_id(EEP_OW_HOLZ) >> 4);
+//			if (hkopt.source.atmos_temp == 127) {
+//				uart_puts("OW CRC");
+//			}
 			ow_state = 3;
 			break;
 		case 3:
-			temps.Speicher0 = (ow_temp_id(EEP_OW_SPEICHER_0) >> 4);
+			hkopt.source.speicher0 = (ow_temp_id(EEP_OW_SPEICHER_0) >> 4);
 			ow_state = 4;
 			break;
 		case 4:
-			temps.Speicher1 = (ow_temp_id(EEP_OW_SPEICHER_1) >> 4);
+			hkopt.source.speicher1 = (ow_temp_id(EEP_OW_SPEICHER_1) >> 4);
 			ow_state = 5;
 			break;
 		case 5:
-			temps.Speicher2 = (ow_temp_id(EEP_OW_SPEICHER_2) >> 4);
+			hkopt.source.speicher2 = (ow_temp_id(EEP_OW_SPEICHER_2) >> 4);
 			ow_state = 6;
 			break;
 		case 6:
-			temps.Speicher3 = (ow_temp_id(EEP_OW_SPEICHER_3) >> 4);
+			hkopt.source.speicher3 = (ow_temp_id(EEP_OW_SPEICHER_3) >> 4);
 			ow_state = 7;
 			break;
 		case 7:
-			temps.Speicher4 = (ow_temp_id(EEP_OW_SPEICHER_4) >> 4);
+			hkopt.source.speicher4 = (ow_temp_id(EEP_OW_SPEICHER_4) >> 4);
 			ow_state = 8;
 			break;
 		case 8:
@@ -303,41 +335,82 @@ void prog(){
 		ww_state_machine();
 		hk2_state_machine();
 
-		// Energiequelle
-		// source_turn hat 3 Zustände
-		// zu Holz drehen, zu Diesel drehen, aus
-		if ((temps.source_ist != temps.source_soll) || (temps.source_turn != OFF)) {	// Quelle hat sich geändert oder Mischer in Bewegung
-			if (temps.source_turn != temps.source_soll) {
-				temps.source_turn = OFF;
+		// Brenner
+		switch (hkopt.source.buderus_state) {
+		case 0:
+			if (hkopt.source.buderus_on && hkopt.source.source_ist == HEIZOEL) {
+				hkopt.source.buderus_state = 1;
 			}
-			if (temps.source_turn == OFF) {
-				temps.source_turn = temps.source_soll;
-				source_timer = 0;
-				PORTA &= ~((1 << PA3) | (1 << PA2));
-				if (temps.source_turn == HOLZ) {
-					PORTA |= (1 << PA3);
-				} else if (temps.source_turn == HEIZOEL) {
-					PORTA |= (1 << PA2);
-				}
+			break;
+		case 1:	// warte bis Energie nötig ist
+			if (hkopt.source.buderus_fire) {
+				shift |= (1 << BRENNER);
+				hkopt.source.buderus_state = 2;
+				break;
 			}
-			// Motor dreht, warte
-			if (source_timer >= 130) {
-				PORTA &= ~((1 << PA3) | (1 << PA2));
-				temps.source_ist = temps.source_turn;
-				temps.source_turn = OFF;
+			if (!hkopt.source.buderus_on ||
+					hkopt.source.source_ist != HEIZOEL) {
+				shift &= ~(1 << BRENNER);
+				hkopt.source.buderus_state = 0;
+				break;
 			}
+			break;
+		case 2:	// heize bis maximale Temperatur erreicht ist
+			if (hkopt.source.buderus_temp > hkopt.source.buderus_temp_max) {
+				shift &= ~(1 << BRENNER);
+				hkopt.source.buderus_state = 3;
+				break;
+			}
+			if (!hkopt.source.buderus_fire) {
+				shift &= ~(1 << BRENNER);
+				hkopt.source.buderus_state = 1;
+				break;
+			}
+			if (!hkopt.source.buderus_on ||
+					hkopt.source.source_ist != HEIZOEL) {
+				shift &= ~(1 << BRENNER);
+				hkopt.source.buderus_state = 0;
+				break;
+			}
+			break;
+		case 3:	// warte bis wieder geheizt werden muss
+			if (hkopt.source.buderus_temp < (hkopt.source.buderus_temp_max - hkopt.source.buderus_temp_diff)) {
+				shift |= (1 << BRENNER);
+				hkopt.source.buderus_state = 2;
+				break;
+			}
+			if (!hkopt.source.buderus_fire) {
+				shift &= ~(1 << BRENNER);
+				hkopt.source.buderus_state = 1;
+				break;
+			}
+			if (!hkopt.source.buderus_on ||
+					hkopt.source.source_ist != HEIZOEL) {
+				shift &= ~(1 << BRENNER);
+				hkopt.source.buderus_state = 0;
+				break;
+			}
+			break;
+		default:
+			hkopt.source.buderus_state = 0;
 		}
 
-		hkopt.source.buderus_temp_min = 50;
-		hkopt.source.buderus_temp_diff = 5;
-		hkopt.source.buderus_temp_max = 70;
-		if (hkopt.source.need_energy && (temps.source_ist == HEIZOEL)) {
-			if (!(shift & (1 << BRENNER)) && hkopt.source.buderus_temp < (hkopt.source.buderus_temp_max - hkopt.source.buderus_temp_diff)) {
-				shift |= (1 << BRENNER);
-				shift_set(shift);
-			} else if ((shift & (1 << BRENNER)) && hkopt.source.buderus_temp >= hkopt.source.buderus_temp_max){
-				shift &= ~(1 << BRENNER);
-				shift_set(shift);
+		// Energiequelle
+		if (hkopt.source.source_ist != hkopt.source.source_soll) {
+			if (hkopt.source.source_ist != TURNING) {
+				PORTA &= ~((1 << PA3) | (1 << PA2));
+				if (hkopt.source.source_soll == HOLZ) {
+					PORTA |= (1 << PA3);
+				} else if (hkopt.source.source_soll == HEIZOEL) {
+					PORTA |= (1 << PA2);
+				}
+				source_timer = 0;
+				hkopt.source.source_ist = TURNING;
+				hkopt.source.source_turn = hkopt.source.source_soll;
+			}
+			if (source_timer >= 130 && hkopt.source.source_ist == TURNING) {
+				PORTA &= ~((1 << PA3) | (1 << PA2));
+				hkopt.source.source_ist = hkopt.source.source_turn;
 			}
 		}
 	}

@@ -7,6 +7,5 @@
 #include "types.h"
 
 struct opts hkopt;
-struct temperatures temps;
 
 uint8_t source_timer = 0;

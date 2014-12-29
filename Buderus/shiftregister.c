@@ -15,6 +15,7 @@ void shiftClear(uint16_t mask){
 }
 
 void shiftCommit() {
+	//FIXME toggle led on every commmit
 	PORTD &= ~((1 << DATA) | (1 << CLOCK) | (1 << STROBE));		// (init) Data, Clock, Strobe -> low
 	for (uint8_t i = 0; i < 16; i++){
 		PORTD &= ~((1 << DATA) | (1 << CLOCK));		// (cycle init) Data, Clock -> low

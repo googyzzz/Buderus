@@ -36,9 +36,7 @@ static void lcd_out( uint8_t data )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Initialisierung: muss ganz am Anfang des Programms aufgerufen werden.
-void lcd_init( void )
-{
+void lcd_init( void ) {
     // verwendete Pins auf Ausgang schalten
     uint8_t pins = (0x0F << LCD_DB) |           // 4 Datenleitungen
                    (1<<LCD_RS) |                // R/S Leitung
