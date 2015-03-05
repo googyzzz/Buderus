@@ -134,9 +134,11 @@ typedef struct udp_packet {
  * LAN
  */
 
+extern uint8_t net_buf[];
+
 void lan_init();
 void lan_poll();
 
-extern void udp_packet(eth_frame_t *frame, uint16_t len);
+void udp_packet(eth_frame_t *frame, uint16_t len);
 uint8_t udp_send(eth_frame_t *frame, uint16_t len);
 void udp_reply(eth_frame_t *frame, uint16_t len);

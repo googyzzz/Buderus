@@ -5,7 +5,8 @@ static uint16_t shift;	// Sollzustand der Schieberegister
 
 // aktualisiere die Schieberegister mit dem Wert in der Variable shift
 void shiftCommit() {
-	PORTD &= ~((1 << DATA) | (1 << CLOCK) | (1 << STROBE));		// init: Data, Clock, Strobe -> low
+	//FIXME toggle led on every commmit
+	PORTD &= ~((1 << DATA) | (1 << CLOCK) | (1 << STROBE));		// (init) Data, Clock, Strobe -> low
 	for (uint8_t i = 0; i < 16; i++){
 		PORTD &= ~((1 << DATA) | (1 << CLOCK));		// (cycle init) Data, Clock -> low
 		if (1 & (shift >> (15 - i))) {					// if

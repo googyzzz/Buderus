@@ -67,12 +67,15 @@ uint16_t messung(uint8_t channel) {
 		shift_unset(mask);	// select channel
 
 		// Kondensator entladen
-		shift_set(1 << T5);		// Kondensator Entladetransistor T5 einschalten
-		timer = 0;
+		shift |= (1 << T5);
+		shift_set(shift);		// Kondensator Entladetransistor T5 einschalten
+		mval = 0;				// Zähler initialisieren
+
+		Mess_timer = 0;
 		state = 1;
 		break;
-	case 1:	// warten bis Kondensator ausreichend entladen ist
-		if (timer > 10) {
+	case 1:
+		if (Mess_timer > 200) {
 			state = 2;
 		}
 		break;

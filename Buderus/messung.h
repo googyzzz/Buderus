@@ -17,6 +17,13 @@
 #define OK		0xFF
 #define ERROR	0x0F
 
+
+extern volatile uint8_t Mess_timer;
+uint8_t state;
+// Messergebnis ADC
+volatile uint16_t mval;
+volatile uint8_t flag;
+
 uint8_t convert_mt(uint16_t mes);
 uint16_t messung(uint8_t channel);
 void messung_init();

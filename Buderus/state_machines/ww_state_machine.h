@@ -8,7 +8,9 @@
 #ifndef WW_STATE_MACHINE_H_
 #define WW_STATE_MACHINE_H_
 
-void init_ww_from_eep();
+extern volatile uint16_t shift;
+extern volatile uint8_t WW_timer;
+
 void ww_state_machine();
 
 #endif /* WW_STATE_MACHINE_H_ */

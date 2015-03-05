@@ -40,7 +40,7 @@ uint8_t udp_send(eth_frame_t *frame, uint16_t len)
 
 	udp->len = htons(len);
 	udp->cksum = 0;
-	udp->cksum = ip_cksum(len + IP_PROTOCOL_UDP,
+	udp->cksum = ip_cksum(len + IP_PROTOCOL_UDP, 
 		(uint8_t*)udp-8, len+8);
 
 	return ip_send(frame, len);
@@ -63,7 +63,7 @@ void udp_reply(eth_frame_t *frame, uint16_t len)
 	udp->len = htons(len);
 
 	udp->cksum = 0;
-	udp->cksum = ip_cksum(len + IP_PROTOCOL_UDP,
+	udp->cksum = ip_cksum(len + IP_PROTOCOL_UDP, 
 		(uint8_t*)udp-8, len+8);
 
 	ip_reply(frame, len);
@@ -77,7 +77,7 @@ void udp_filter(eth_frame_t *frame, uint16_t len)
 
 	if(len >= sizeof(udp_packet_t))
 	{
-		udp_packet(frame, ntohs(udp->len) -
+		udp_packet(frame, ntohs(udp->len) - 
 			sizeof(udp_packet_t));
 	}
 }
@@ -197,13 +197,13 @@ void ip_reply(eth_frame_t *frame, uint16_t len)
 void ip_filter(eth_frame_t *frame, uint16_t len)
 {
 	ip_packet_t *packet = (void*)(frame->data);
-
+	
 	//if(len >= sizeof(ip_packet_t))
 	//{
 		if( (packet->ver_head_len == 0x45) &&
 			(packet->to_addr == ip_addr) )
 		{
-			len = ntohs(packet->total_len) -
+			len = ntohs(packet->total_len) - 
 				sizeof(ip_packet_t);
 
 			switch(packet->protocol)
@@ -326,7 +326,7 @@ void eth_reply(eth_frame_t *frame, uint16_t len)
 {
 	memcpy(frame->to_addr, frame->from_addr, 6);
 	memcpy(frame->from_addr, mac_addr, 6);
-	enc28j60_send_packet((void*)frame, len +
+	enc28j60_send_packet((void*)frame, len + 
 		sizeof(eth_frame_t));
 }
 
@@ -360,7 +360,7 @@ void lan_poll()
 {
 	uint16_t len;
 	eth_frame_t *frame = (void*)net_buf;
-
+	
 	while((len = enc28j60_recv_packet(net_buf, sizeof(net_buf))))
 		eth_filter(frame, len);
 }

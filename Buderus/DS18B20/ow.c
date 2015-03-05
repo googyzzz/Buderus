@@ -154,6 +154,9 @@ uint16_t ow_temp_id(uint8_t id) {
 		scratchpad[i] = ow_read_byte();
 	}
 	ow_reset();				//nothing more to read, stop
+//	if (crc8(&scratchpad[0]) != scratchpad[8]) {
+//		return 0b0000011111110000;	// entspricht 127C, Fehler
+//	}
 	return scratchpad[1] << 8 | scratchpad[0];
 }
 
