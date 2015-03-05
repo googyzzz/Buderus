@@ -193,7 +193,6 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 					shift_set(shift);
 					break;
 				case 0x56:
-					notreset = 0;
 					break;
 				default: data[3] = 0x00;
 				}

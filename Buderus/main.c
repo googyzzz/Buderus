@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <util/delay.h>
-#include <avr/wdt.h>		// Watchdog
+//#include <avr/wdt.h>		// Watchdog
 //#include <avr/pgmspace.h>	// PROGMEM
 #include <avr/eeprom.h>		// EEPROM
 #include "main.h"
@@ -27,9 +27,8 @@ uint8_t messtate = 0;	// nur in main bei Buderus Messung
 
 void initialize() {
 	// init Watchdog
-	wdt_enable(WDTO_2S);
+	//wdt_enable(WDTO_2S);
 	//wdt_reset();
-	notreset = 1;
 
 	// init Ports
 	DDRA = 0xFF;
@@ -122,9 +121,7 @@ void prog(){
 		uart_putc(10);
 		uart_putc(13);
 
-		if (notreset) {
-			wdt_reset();
-		}
+		//wdt_reset();
 		lan_poll();
 
 		// Time to send NTP request?
