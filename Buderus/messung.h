@@ -1,10 +1,8 @@
 #ifndef MESSUNG_H_
 #define MESSUNG_H_
 
-// Comparator PORT
 #define COMP PD6
-#define COMPDR DDRD
-#define COMPPORT PORTD
+#define COMPPORT DDRD
 
 // Multiplexer
 #define S0 8

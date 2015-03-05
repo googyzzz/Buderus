@@ -17,10 +17,14 @@
 #define DATA PD4
 #define CLOCK PD5
 
-void shift_init();
-uint16_t shift_getValue();
-void shift_set(uint16_t mask);
-void shift_unset(uint8_t mask);
+volatile uint16_t shift;
 
+void shift_init();
+void shift_set(uint16_t v);
+
+uint16_t shiftGetValue();
+void shiftSet(uint16_t mask);
+void shiftClear(uint16_t mask);
+void shiftCommit();
 
 #endif /* SHIFTREGISTER_H_ */

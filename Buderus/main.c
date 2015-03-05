@@ -31,7 +31,6 @@ void initialize() {
 	//wdt_reset();
 	notreset = 1;
 
-void initialize() {
 	// init Ports
 	DDRA = 0xFF;
 	PORTA = 0;
@@ -45,8 +44,6 @@ void initialize() {
 	lcd_init();
 	uart_init();
 	shift_init();
-	// init ICP für ADC Messung
-	messung_init();
 
 	//write EEPROM
 //	eeprom_write_byte((uint8_t *) 48, 0x28);
@@ -87,17 +84,20 @@ void initialize() {
 	hkopt.source.buderus_on = 0;
 
 
-//	sei();
+	sei();
+
+	// init ICP für ADC Messung
+	messung_init();
 
 	// Zeitgeber ms slots
-//	timer0_init();
+	timer0_init();
 
 	// Init LAN
 	lan_init();
 
 	// init OneWire
-//	ow_init();
-//	ow_init2();
+	ow_init();
+	ow_init2();
 }
 
 void prog(){

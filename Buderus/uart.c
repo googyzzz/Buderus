@@ -16,7 +16,8 @@ void uart_init() {	// USART init
 }
 
 void uart_putc(unsigned char c) {
-	while (!(UCSRA & (1 << UDRE))) {} /* warten bis Senden moeglich */
+	while (!(UCSRA & (1 << UDRE))) {
+	} /* warten bis Senden moeglich */
 	UDR = c; /* sende Zeichen */
 }
 

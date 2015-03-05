@@ -1,11 +1,7 @@
 /*
  * defines.h
  *
-<<<<<<< HEAD
- *  Created on: 03.06.2014
-=======
  *  Created on: 17.06.2014
->>>>>>> funktioniert
  *      Author: googy_000
  */
 
