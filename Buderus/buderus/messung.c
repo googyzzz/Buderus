@@ -1,7 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "messung.h"
-#include "shiftregister.h"
+#include "../shiftregister.h"
 #include <stdlib.h>
 
 void messung_init() {
@@ -58,17 +58,17 @@ uint16_t messung(uint8_t channel) {
 		state = 1;
 		break;
 	case 1:
-		if (Mess_timer > 200) {
+		// warte bis der Sample Kondensator vollständig entladen ist
+		if (Mess_timer > 200) {	// von Timer0 getrieben, ca. 200ms
 			state = 2;
-			break;
 		}
 		break;
 	case 2:
 //		// Kondensator laden
-		flag = INIT;
+		flag = INIT;			// Flag zum Messergebnis zurücksetzen
 		shift &= ~(1 << T5);
 		shift_set(shift);		// Kondensator laden
-		icp_init();				// Timer starten
+		icp_init();				// Timer starten mit ICP
 		state = 3;
 		break;
 	case 3:

@@ -9,8 +9,6 @@
 #include "../types.h"
 #include "../shiftregister.h"
 
-#include "../main.h"
-
 #include <stdlib.h>
 #include "../uart.h"
 
@@ -34,22 +32,23 @@ void hk1_state_machine() {
 		}
 
 		if (hkopt.source.source_ist == HOLZ) {
-		//	if (hour > 5 && hour < 23) {
-				//if (hkopt.source.atmos_state == EIN)
-				//if (hkopt.ww.ist >= (hkopt.ww.soll - 3)) {
-					if (arbeitsZimmer.degree < (hkopt.hk1.soll - hkopt.hk1.diff)) {
-						shift |= (1 << HK1);
-						shift_set(shift);
-					} else {
-						if ((arbeitsZimmer.degree >= (hkopt.hk1.soll + hkopt.hk1.diff)) &&
-								(arbeitsZimmer.millis > 5000)) {
-							shift &= ~(1 << HK1);	// zu warm, Pumpe aus
-							shift_set(shift);
-						}
+			if (hkopt.schlafZimmer.active && hkopt.schlafZimmer.ist.degree < hkopt.schlafZimmer.soll.degree) {
+					shift |= (1 << HK1);
+				} else {
+					if ((hkopt.schlafZimmer.ist.degree >= (hkopt.hk1.soll + hkopt.hk1.diff)) && (hkopt.schlafZimmer.ist.millis > 5000)) {
+						shift &= ~(1 << HK1);	// zu warm, Pumpe aus
 					}
-				//} else {
-				//	shift &= ~(1 << HK1);
-				//}
+				}
+			}
+			if (hkopt.arbeitsZimmer.active) {
+				if (hkopt.arbeitsZimmer.ist.degree < (hkopt.hk1.soll - hkopt.hk1.diff)) {
+					shift |= (1 << HK1);
+				} else {
+					if ((hkopt.arbeitsZimmer.ist.degree >= (hkopt.hk1.soll + hkopt.hk1.diff)) && (hkopt.schlafZimmer.ist.millis > 5000)) {
+						shift &= ~(1 << HK1);	// zu warm, Pumpe aus
+					}
+				}
+			}
 		} else {
 			shift &= ~(1 << HK1);
 		}
@@ -64,7 +63,6 @@ void hk1_state_machine() {
 		if (!hkopt.hk1.active) {
 			hkopt.hk1.state = 0;
 			shift &= ~(1 << HK1);
-			shift_set(shift);
 			break;
 		}
 		// timeout
@@ -76,4 +74,5 @@ void hk1_state_machine() {
 	default:
 		hkopt.hk1.state = 0;
 	}
+	shift_set(shift);	// TODO auslagern, hier nicht nötig
 }

@@ -14,9 +14,6 @@ volatile uint32_t ntp_next_update;
 uint32_t time_offset;
 extern volatile uint16_t shift;
 
-extern struct temperature_fine arbeitsZimmer;
-extern struct temperature_fine schlafZimmer;
-
 extern uint8_t source_ist;
 
 void udp_packet(eth_frame_t *frame, uint16_t len);

@@ -55,20 +55,21 @@ struct speicher {
 	uint8_t A4;			// tiefster Anschluss
 };
 
-
-
 struct source_opt {
-	enum sources_t source_soll;
-	enum sources_t source_turn;
-	enum sources_t source_ist;
+	// nur diese drei enums beeinflussen den Energie-Mischer, sonst nichts
+	enum sources_t source_soll;	// read write
+	enum sources_t source_turn;	// read only
+	enum sources_t source_ist;	// read only
+
 	uint8_t buderus_on;
 	uint8_t buderus_state;
-	uint16_t brenner_state;
 	uint8_t buderus_fire;
 	uint8_t buderus_temp;
 	uint8_t buderus_temp_max;
 	uint8_t buderus_temp_diff;
 	uint8_t buderus_temp_min;
+
+	uint16_t brenner_state;
 	uint8_t atmos_state;
 	uint8_t atmos_temp;
 	uint8_t speicher0;
@@ -116,6 +117,8 @@ struct opts {
 	struct hk1_opt	hk1;
 	struct ww_opt	ww;
 	struct hk2_opt	hk2;
+	struct zone arbeitsZimmer;
+	struct zone schlafZimmer;
 };
 
 extern struct opts hkopt;

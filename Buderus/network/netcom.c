@@ -12,7 +12,6 @@
 #include "../types.h"
 #include "../defines.h"
 #include "../timers/timer0.h"
-#include "../main.h"
 
 void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 {
@@ -63,12 +62,12 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 			data[23] = hkopt.source.speicher2;
 			data[24] = hkopt.source.speicher3;
 			data[25] = hkopt.source.speicher4;
-			data[26] = arbeitsZimmer.degree;
-			data[27] = arbeitsZimmer.millis >> 8;
-			data[28] = arbeitsZimmer.millis & 0xFF;
-			data[29] = schlafZimmer.degree;
-			data[30] = schlafZimmer.millis >> 8;
-			data[31] = schlafZimmer.millis & 0xFF;
+			data[26] = hkopt.arbeitsZimmer.ist.degree;
+			data[27] = hkopt.arbeitsZimmer.ist.millis >> 8;
+			data[28] = hkopt.arbeitsZimmer.ist.millis & 0xFF;
+			data[29] = hkopt.schlafZimmer.ist.degree;
+			data[30] = hkopt.schlafZimmer.ist.millis >> 8;
+			data[31] = hkopt.schlafZimmer.ist.millis & 0xFF;
 			data[32] = hkopt.source.buderus_temp;
 			data[33] = (hkopt.source.brenner_state >> 8);
 			data[34] = shift;
