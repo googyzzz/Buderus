@@ -71,7 +71,9 @@ void udp_packet(eth_frame_t *frame, uint16_t len)			// udp paketereignis
 			data[32] = hkopt.source.buderus_temp;
 			data[33] = (hkopt.source.brenner_state >> 8);
 			data[34] = shift;
-			length = 35;
+			data[35] = hkopt.atmos_abgas_temp & 0xFF;
+			data[36] = hkopt.atmos_abgas_temp >> 8;
+			length = 37;
 			//sende Antwort
 			udp_reply(frame, length);
 		}

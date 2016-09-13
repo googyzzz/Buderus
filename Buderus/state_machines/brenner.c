@@ -9,6 +9,7 @@
 #include "../types.h"
 #include "../shiftregister.h"
 #include "brenner.h"
+#include "../uart.h"
 
 // TODO Reine Brennerlogik hier unterbringen, rest auslagern
 
@@ -16,11 +17,14 @@ void brenner() {
 		// Brenner
 		switch (hkopt.source.buderus_state) {
 		case 0:
+			uart_puts("state0");
+			if (hkopt.source.buderus_on) uart_puts("..budon.."); else uart_puts("..budoff..");
 			if (hkopt.source.buderus_on && hkopt.source.source_ist == HEIZOEL) {
 				hkopt.source.buderus_state = 1;
 			}
 			break;
 		case 1:	// warte bis Energie nötig ist
+			uart_puts("state1");
 			// Buderus abgeschaltet oder Energiequelle geändert, schalte Brenner ab
 			if (!hkopt.source.buderus_on || hkopt.source.source_ist != HEIZOEL) {
 				shift &= ~(1 << BRENNER);
@@ -35,6 +39,7 @@ void brenner() {
 			}
 			break;
 		case 2:
+			uart_puts("state2");
 			// Buderus abgeschaltet oder Energiequelle geändert, schalte Brenner ab
 			if (!hkopt.source.buderus_on || hkopt.source.source_ist != HEIZOEL) {
 				shift &= ~(1 << BRENNER);
@@ -55,6 +60,7 @@ void brenner() {
 			}
 			break;
 		case 3:
+			uart_puts("state3");
 			// Buderus abgeschaltet oder Energiequelle geändert, schalte Brenner ab
 			if (!hkopt.source.buderus_on || hkopt.source.source_ist != HEIZOEL) {
 				shift &= ~(1 << BRENNER);

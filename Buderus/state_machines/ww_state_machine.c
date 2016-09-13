@@ -93,7 +93,7 @@ void ww_state_machine() {
 			hkopt.ww.state = 1;
 			break;
 		}
-		if (hkopt.ww.ist < (hkopt.ww.soll_d - hkopt.ww.diff)) {	// nicht auf Maximaltemperatur
+		if (hkopt.ww.ist < (hkopt.ww.soll - hkopt.ww.diff)) {	// nicht auf Maximaltemperatur
 			hkopt.ww.state = 6;
 			hkopt.source.buderus_fire = 1;	// schalte Brenner hinzu
 			break;
@@ -102,20 +102,23 @@ void ww_state_machine() {
 	case 6:
 		if (!hkopt.ww.active) {
 			hkopt.ww.state = 0;
-			shift &= ~(1 << WW);
+			shift &= ~(1 << WW);				// Pumpe abschalten
 			hkopt.source.buderus_fire = 0;		// Brenner abschalten
 			break;
 		}
 		if (hkopt.source.source_ist != HEIZOEL) {
 			hkopt.ww.state = 1;
-			shift &= ~(1 << WW);
+			shift &= ~(1 << WW);				// Pumpe abschalten
 			hkopt.source.buderus_fire = 0;		// Brenner abschalten
 			break;
 		}
-		if (hkopt.ww.ist >= hkopt.ww.soll_d) {
+		if ((hkopt.ww.ist + 5) < hkopt.source.buderus_temp) {
+			shift |= (1 << WW);					// Pumpe einschalten
+		}
+		if (hkopt.ww.ist >= hkopt.ww.soll) {
 			hkopt.source.buderus_fire = 0;
 			hkopt.ww.state = 5;
-			shift &= ~(1 << WW);
+			shift &= ~(1 << WW);				// Pumpe abschalten
 		}
 		break;
 	default:

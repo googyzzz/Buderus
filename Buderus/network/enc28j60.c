@@ -174,8 +174,8 @@ void enc28j60_init(uint8_t *macadr)
 	ENC28J60_SPI_DDR &= ~ENC28J60_SPI_MISO;
 	enc28j60_release();
 
-	SPCR = (1<<SPE)|(1<<MSTR);
-	SPSR |= (1<<SPI2X); // Maximum speed
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0);
+	//SPSR |= (1<<SPI2X); // Maximum speed
 
 	// Reset ENC28J60
 	enc28j60_soft_reset();

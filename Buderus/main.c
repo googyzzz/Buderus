@@ -22,7 +22,13 @@
 #include "buderus/buderus.h"
 #include "buderus/messung.h"		// messung_init
 
+#include "can/mcp2515.h"
+#include "can/global.h"
+#include "can/defaults.h"
+
 #define SERIAL_DEBUG
+
+tCAN message;
 
 void initialize() {
 	// init Ports
@@ -32,7 +38,7 @@ void initialize() {
 	PORTB = 0;
 	DDRC = 0xFF;
 	PORTC = 0;
-	DDRD = 1;		// Port D0 als eingang???
+	DDRD = 1 | (1 << PD7);		// Port D0 als eingang???			PD7 = CAN_CS
 	PORTD = 0xFF;
 
 	uart_init();
@@ -66,14 +72,28 @@ void initialize() {
 //	hkopt.source.buderus_temp_min = 50;
 	hkopt.source.buderus_temp_diff = 5;
 	hkopt.source.buderus_temp_max = 70;
+	hkopt.ww.soll_d = 50;
 
-	hkopt.source.buderus_on = 0;
+	hkopt.source.buderus_on = 1;
+
 
 	sei();			// interrupts aktivieren
 	messung_init();	// init ICP für ADC Messung
 	timer0_init();	// Zeitgeber ms slots
 	lan_init();		// Init LAN
 	ds18b20_init();	// init ds18b20
+
+
+#define CAN
+
+#ifdef CAN
+	mcp2515_init();
+	message.id = 0x123;		// kommt nicht am Filter vorbei
+	message.header.rtr = 0;
+	message.header.length = 2;
+	message.data[0] = 0xab;
+	message.data[1] = 0xcd;
+#endif //CAN
 }
 
 void prog(){
@@ -132,6 +152,34 @@ void prog(){
 		hk2_state_machine();	// Bodenheizung
 		brenner();				// Heizölbrenner
 		energiequelle();		// Umschaltung Holz/Heizöl
+
+#ifdef CAN
+		if (mcp2515_check_message()) {
+			if (mcp2515_get_message(&message)) {
+				uart_puts("\n\n\rID: ");
+				itoa((message.id), buf, 16);
+				uart_puts(buf);
+				uart_puts("   DLC: ");
+				itoa((message.header.length), buf, 10);
+				uart_puts(buf);
+				uart_puts("   Data: ");
+				for (uint8_t i = 0; i < message.header.length; i++) {
+					itoa((message.data[i]), buf, 16);
+					uart_puts(buf);
+					uart_putc(' ');
+				}
+				uart_puts("\n\n\r");
+				hkopt.atmos_abgas_temp = message.data[1];
+				hkopt.atmos_abgas_temp |= message.data[2] << 8;
+			}
+			else {
+				uart_puts("FAIL\n\r");
+			}
+		}
+		itoa(hkopt.atmos_abgas_temp, buf, 10);
+		uart_puts(buf);
+		uart_puts("\n\r");
+#endif //CAN
 	}
 }
 

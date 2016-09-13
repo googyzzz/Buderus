@@ -33,11 +33,10 @@ void hk1_state_machine() {
 
 		if (hkopt.source.source_ist == HOLZ) {
 			if (hkopt.schlafZimmer.active && hkopt.schlafZimmer.ist.degree < hkopt.schlafZimmer.soll.degree) {
-					shift |= (1 << HK1);
-				} else {
-					if ((hkopt.schlafZimmer.ist.degree >= (hkopt.hk1.soll + hkopt.hk1.diff)) && (hkopt.schlafZimmer.ist.millis > 5000)) {
-						shift &= ~(1 << HK1);	// zu warm, Pumpe aus
-					}
+				shift |= (1 << HK1);
+			} else {
+				if ((hkopt.schlafZimmer.ist.degree >= (hkopt.hk1.soll + hkopt.hk1.diff)) && (hkopt.schlafZimmer.ist.millis > 5000)) {
+					shift &= ~(1 << HK1);	// zu warm, Pumpe aus
 				}
 			}
 			if (hkopt.arbeitsZimmer.active) {

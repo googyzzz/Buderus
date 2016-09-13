@@ -90,8 +90,8 @@ struct hk1_opt {
 
 struct ww_opt {
 	uint8_t	soll;
-	uint8_t soll_h;
-	uint8_t soll_d;
+	uint8_t soll_h;		// soll für Holzbetrieb
+	uint8_t soll_d;		// soll für Dieselbetrieb
 	uint8_t	ist;
 	uint8_t	state;
 	uint8_t	active;
@@ -119,6 +119,7 @@ struct opts {
 	struct hk2_opt	hk2;
 	struct zone arbeitsZimmer;
 	struct zone schlafZimmer;
+	uint16_t atmos_abgas_temp;
 };
 
 extern struct opts hkopt;
